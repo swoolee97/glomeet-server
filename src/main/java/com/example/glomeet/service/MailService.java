@@ -21,6 +21,7 @@ public class MailService {
 
     public ResponseEntity sendRandomCode(String toMail, String randomCode) {
         try {
+            validateSchoolEmail(toMail);
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "utf-8");
             messageHelper.setFrom(FROM_MAIL);
@@ -33,6 +34,18 @@ public class MailService {
         } catch (Exception e) {
             System.out.println(e);
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    private void validateSchoolEmail(String email) {
+        if (!email.endsWith("ac.kr")) {
+            throw new InvalidEmailException(email + " 학교 메일만 가능합니다");
+        }
+    }
+
+    private class InvalidEmailException extends RuntimeException {
+        private InvalidEmailException(String message) {
+            super(message);
         }
     }
 
