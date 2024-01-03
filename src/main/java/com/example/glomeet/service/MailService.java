@@ -1,10 +1,10 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.exception.mail.InvalidSchoolEmailException;
+import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class MailService {
 
     private final JavaMailSender mailSender;
 
-    public ResponseEntity sendRandomCode(String toMail, String randomCode) {
+    public void sendRandomCode(String toMail, String randomCode) throws MessagingException {
         try {
             validateSchoolEmail(toMail);
             MimeMessage message = mailSender.createMimeMessage();
@@ -30,22 +30,14 @@ public class MailService {
             messageHelper.setSubject(AUTH_MAIL_SUBJECT);
             messageHelper.setText(randomCode);
             mailSender.send(message);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (Exception e) {
-            System.out.println(e);
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        } catch (MessagingException e) {
+            throw new MessagingException("메일 전송 중 오류");
         }
     }
 
     private void validateSchoolEmail(String email) {
         if (!email.endsWith("ac.kr")) {
-            throw new InvalidEmailException(email + " 학교 메일만 가능합니다");
-        }
-    }
-
-    private class InvalidEmailException extends RuntimeException {
-        private InvalidEmailException(String message) {
-            super(message);
+            throw new InvalidSchoolEmailException(email + " 학교 메일만 가능합니다");
         }
     }
 
