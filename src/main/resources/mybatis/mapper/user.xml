@@ -11,4 +11,8 @@
         FROM USER
         WHERE nick_name = #{nickName}
     </select>
+    <insert id="insertUser" parameterType="com.example.glomeet.dto.UserDTO">
+        INSERT INTO USER(email, password, nick_name)
+        VALUES (#{email}, #{password}, #{nickName})
+    </insert>
 </mapper>

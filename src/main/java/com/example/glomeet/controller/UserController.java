@@ -1,11 +1,13 @@
 package com.example.glomeet.controller;
 
+import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.service.UserService;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +20,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/signUp")
-    public void signUp(@RequestBody @NonNull SignUpRequest signUpRequest) {
-
+    public ResponseEntity<SignUpResponse> signUp(@RequestBody @NonNull UserDTO userDTO) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String cryptedPassword = encoder.encode(userDTO.getPassword());
+        userDTO.setPassword(cryptedPassword);
+        boolean result = userService.signUp(userDTO);
+        return new ResponseEntity<>(new SignUpResponse(result), HttpStatus.OK);
     }
 
     @PostMapping("/emailCheck")
@@ -40,19 +46,15 @@ public class UserController {
         private final boolean isValid;
     }
 
+    @RequiredArgsConstructor
     @Getter
-    private static class CheckRequest {
-        private String email;
-        private String nickName;
+    private static class SignUpResponse {
+        private final boolean isComplete;
     }
 
     @Getter
-    private static class SignUpRequest {
-        @NonNull
+    private static class CheckRequest {
         private String email;
-        @NonNull
-        private String password;
-        @NonNull
         private String nickName;
     }
 
