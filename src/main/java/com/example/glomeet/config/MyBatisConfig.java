@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-// 패키지명
 @MapperScan(value = "com.example.glomeet.mapper", sqlSessionFactoryRef = "SqlSessionFactory")
 public class MyBatisConfig {
 

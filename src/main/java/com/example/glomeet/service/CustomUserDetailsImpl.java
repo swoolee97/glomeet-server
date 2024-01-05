@@ -28,7 +28,7 @@ public class CustomUserDetailsImpl implements UserDetailsService {
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(UserDTO userDTO) {
-        // 권한 정보를 GrantedAuthority 객체의 컬렉션으로 변환합니다.
+        // 권한 정보를 GrantedAuthority 객체의 컬렉션으로 변환
         return Collections.singletonList(new SimpleGrantedAuthority(userDTO.getRole()));
     }
 
