@@ -18,4 +18,6 @@ public class UserDTO {
     private Timestamp signUpDate;
     @NonNull
     private String nickName;
+    @NonNull
+    private String role;
 }

@@ -15,4 +15,10 @@
         INSERT INTO USER(email, password, nick_name)
         VALUES (#{email}, #{password}, #{nickName})
     </insert>
+    <select id="findUserByEmail" parameterType="com.example.glomeet.dto.UserDTO">
+        SELECT *
+        FROM USER
+        WHERE email = #{email}
+    </select>
+
 </mapper>

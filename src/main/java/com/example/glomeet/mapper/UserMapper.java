@@ -12,4 +12,6 @@ public interface UserMapper {
     public int nickNameCheck(String nickName);
 
     public int insertUser(UserDTO userDTO);
+
+    public UserDTO findUserByEmail(String email);
 }
