@@ -1,6 +1,6 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.exception.mail.InvalidSchoolEmailException;
+import com.example.glomeet.exception.InvalidSchoolEmailException;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
