@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final UserMapper userMapper;
+    private final CustomUserDetailsImpl customUserDetails;
+    private final PasswordEncoder encoder;
 
     public boolean signUp(UserDTO userDTO) {
         int result = userMapper.insertUser(userDTO);

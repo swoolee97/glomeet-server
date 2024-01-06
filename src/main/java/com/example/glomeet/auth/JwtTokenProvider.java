@@ -86,16 +86,17 @@ public class JwtTokenProvider {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("Invalid JWT Token", e);
+        } catch (MalformedJwtException e) {
+            throw new MalformedJwtException("위조된 토큰");
         } catch (ExpiredJwtException e) {
-            log.info("Expired JWT Token", e);
+            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.info("Unsupported JWT Token", e);
+            throw new UnsupportedJwtException(e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.info("JWT claims string is empty.", e);
+            throw new IllegalArgumentException("토큰 에러");
+        } catch (io.jsonwebtoken.security.SecurityException e) {
+            throw new SecurityException("security exception");
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {
