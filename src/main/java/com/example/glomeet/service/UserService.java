@@ -21,11 +21,15 @@ public class UserService {
     private final PasswordEncoder encoder;
 
     public boolean signUp(UserDTO userDTO) {
-        int result = userMapper.insertUser(userDTO);
-        if (result == 0) {
-            return false;
+        // 두 유저가 같은 이메일로 동시에 회원가입한다면 오류가 날 수 있기 때문에
+        // 중복확인을 한 번 더 수행해야함.
+        boolean isUniqueEmail = userMapper.emailCheck(userDTO.getEmail()) == 0;
+        boolean isUniqueNickName = userMapper.nickNameCheck(userDTO.getNickName()) == 0;
+        if (isUniqueEmail && isUniqueNickName) {
+            userMapper.insertUser(userDTO);
+            return true;
         }
-        return true;
+        return false;
     }
 
     public Authentication signIn(UserDTO userDTO) {

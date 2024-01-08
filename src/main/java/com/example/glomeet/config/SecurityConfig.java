@@ -35,11 +35,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests((auth) -> {
-                            auth.requestMatchers("/user/test").hasAuthority("USER");
+                            auth.requestMatchers("/auth/test").hasAuthority("USER");
                             // permitAll()은 필터를 거치지 않는다는 것이 아님.
                             // securityContext에 인증 정보가 없어도 통과된다는 것.
-                            auth.requestMatchers(HttpMethod.POST, "/user/signUp").permitAll();
-                            auth.requestMatchers(HttpMethod.POST, "/user/signIn").permitAll();
+                            auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
