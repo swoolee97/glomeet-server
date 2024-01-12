@@ -40,6 +40,7 @@ public class SecurityConfig {
                             // securityContext에 인증 정보가 없어도 통과된다는 것.
                             auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
                             auth.requestMatchers(HttpMethod.POST, "/fcm/test").permitAll();
+                            auth.requestMatchers(HttpMethod.POST, "/mail/auth").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
