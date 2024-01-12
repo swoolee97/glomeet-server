@@ -39,6 +39,7 @@ public class SecurityConfig {
                             // permitAll()은 필터를 거치지 않는다는 것이 아님.
                             // securityContext에 인증 정보가 없어도 통과된다는 것.
                             auth.requestMatchers(HttpMethod.POST, "/auth/**").permitAll();
+                            auth.requestMatchers(HttpMethod.POST, "/fcm/test").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
