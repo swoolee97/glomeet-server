@@ -3,12 +3,12 @@
 <mapper namespace="com.example.glomeet.mapper.UserMapper">
     <select id="emailCheck" resultType="int">
         SELECT COUNT(*)
-        FROM USER
+        FROM user
         WHERE email = #{email}
     </select>
     <select id="nickNameCheck" resultType="int">
         SELECT COUNT(*)
-        FROM USER
+        FROM user
         WHERE nick_name = #{nickName}
     </select>
     <insert id="insertUser" parameterType="com.example.glomeet.dto.UserDTO">
@@ -17,7 +17,7 @@
     </insert>
     <select id="findUserByEmail" parameterType="com.example.glomeet.dto.UserDTO">
         SELECT *
-        FROM USER
+        FROM user
         WHERE email = #{email}
     </select>
 
