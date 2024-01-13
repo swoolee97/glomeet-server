@@ -3,6 +3,7 @@ package com.example.glomeet.controller;
 import com.example.glomeet.exception.InvalidSchoolEmailException;
 import com.example.glomeet.service.MailService;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class MailController {
     private final MailService mailService;
 
     @PostMapping("/auth")
-    public ResponseEntity sendRandomCode(@RequestBody @NonNull MailRequest mailRequest) {
+    public ResponseEntity sendRandomCode(@RequestBody @Valid MailRequest mailRequest) {
         String email = mailRequest.getEmail();
         String randomCode = mailRequest.getRandomCode();
         try {
@@ -33,11 +34,6 @@ public class MailController {
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }
     }
-
-//    @ExceptionHandler(InvalidSchoolEmailException.class)
-//    private ResponseEntity<String> handleInvalidEmail(Exception e) {
-//        return new ResponseEntity<>(e.getMessage(), HttpStatus.CONFLICT);
-//    }
 
     @Getter
     private static class MailRequest {

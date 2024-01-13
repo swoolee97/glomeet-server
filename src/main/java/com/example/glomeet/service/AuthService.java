@@ -1,10 +1,12 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.dto.UserDTO;
+import com.example.glomeet.controller.AuthController.SignInDTO;
+import com.example.glomeet.controller.AuthController.SignUpDTO;
 import com.example.glomeet.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,51 +16,48 @@ import org.springframework.stereotype.Service;
 @Service
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserMapper userMapper;
-    private final CustomUserDetailsImpl customUserDetails;
+    private final UserDetailsServiceImpl customUserDetails;
     private final PasswordEncoder encoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
-    public boolean signUp(UserDTO userDTO) {
+    public boolean signUp(SignUpDTO signUpDTO) {
         // 두 유저가 같은 이메일로 동시에 회원가입한다면 오류가 날 수 있기 때문에
         // 중복확인을 한 번 더 수행해야함.
-        boolean isUniqueEmail = userMapper.emailCheck(userDTO.getEmail()) == 0;
-        boolean isUniqueNickName = userMapper.nickNameCheck(userDTO.getNickName()) == 0;
+        boolean isUniqueEmail = userMapper.emailCheck(signUpDTO.getEmail()) == 0;
+        boolean isUniqueNickName = userMapper.nickNameCheck(signUpDTO.getNickName()) == 0;
         if (isUniqueEmail && isUniqueNickName) {
-            userMapper.insertUser(userDTO);
+            signUpDTO.setPassword(encoder.encode(signUpDTO.getPassword()));
+            userMapper.insertUser(signUpDTO);
             return true;
         }
         return false;
     }
 
-    public Authentication signIn(UserDTO userDTO) {
-        UserDetails user = customUserDetails.loadUserByUsername(userDTO.getEmail());
-        if (!encoder.matches(userDTO.getPassword(), user.getPassword())) {
+    public Authentication signIn(SignInDTO signInDTO) {
+        UserDetails user = customUserDetails.loadUserByUsername(signInDTO.getEmail());
+        if (!encoder.matches(signInDTO.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다");
         }
 
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDTO.getEmail(),
-                userDTO.getPassword()
+                signInDTO.getEmail(),
+                signInDTO.getPassword()
         );
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        return authenticationToken;
+        return authentication;
     }
 
     public boolean isValidEmail(String email) {
         int count = userMapper.emailCheck(email);
-        if (count > 0) {
-            return false;
-        }
-        return true;
+        return count == 0;
     }
 
     public boolean isValidNickName(String nickName) {
         int count = userMapper.nickNameCheck(nickName);
-        if (count > 0) {
-            return false;
-        }
-        return true;
+        return count == 0;
     }
 }

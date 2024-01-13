@@ -1,5 +1,6 @@
 package com.example.glomeet.mapper;
 
+import com.example.glomeet.controller.AuthController.SignUpDTO;
 import com.example.glomeet.dto.UserDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
@@ -11,7 +12,7 @@ public interface UserMapper {
 
     public int nickNameCheck(String nickName);
 
-    public int insertUser(UserDTO userDTO);
+    public int insertUser(SignUpDTO signUpDTO);
 
     public UserDTO findUserByEmail(String email);
 }

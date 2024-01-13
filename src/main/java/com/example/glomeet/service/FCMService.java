@@ -65,7 +65,6 @@ public class FCMService {
                         .token(targetToken)
                         .build())
                 .build();
-        System.out.println(fcmMessage.toString());
         return objectMapper.writeValueAsString(fcmMessage);
     }
 

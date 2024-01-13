@@ -3,22 +3,20 @@ package com.example.glomeet.controller;
 import com.example.glomeet.auth.JwtTokenProvider;
 import com.example.glomeet.dto.TokenDTO;
 import com.example.glomeet.dto.UserDTO;
-import com.example.glomeet.service.UserService;
-import java.util.HashMap;
-import java.util.Map;
+import com.example.glomeet.service.AuthService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NonNull;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -26,75 +24,74 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
-    private final UserService userService;
+    private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final AuthenticationManager authenticationManager;
 
     @PostMapping("/signUp")
-    public ResponseEntity<?> signUp(@RequestBody @NonNull UserDTO userDTO) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        String cryptedPassword = encoder.encode(userDTO.getPassword());
-        userDTO.setPassword(cryptedPassword);
-        Map<String, Boolean> body = new HashMap<>();
-        boolean result = userService.signUp(userDTO);
-        body.put("result", result);
+    public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDTO signUpDTO) {
+        boolean result = authService.signUp(signUpDTO);
         if (result) {
-            return new ResponseEntity<>(new SignUpResponse(result), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(new SignUpResponse(result), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PostMapping("/test")
-    public ResponseEntity test(@RequestBody @NonNull UserDTO userDTO) {
+    public ResponseEntity test(@RequestBody @NotNull UserDTO userDTO) {
         return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/signIn")
-    public ResponseEntity<?> signIn(@RequestBody @NonNull UserDTO userDTO) {
-        Authentication authenticationToken = userService.signIn(userDTO);
-        //authenticationManager는 임시방편으로 여기서 실행. userService에서 하면 순환참조 오류나서
-        Authentication authentication = authenticationManager.authenticate(authenticationToken);
-        System.out.println(authentication);
+    public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
+        Authentication authentication = authService.signIn(signInDTO);
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         return new ResponseEntity<>(new TokenDTO(accessToken), HttpStatus.OK);
     }
 
     @PostMapping("/emailCheck")
-    public ResponseEntity<CheckResponse> emailCheck(@RequestBody CheckRequest checkRequest) {
-        boolean isValid = userService.isValidEmail(checkRequest.getEmail());
+    public ResponseEntity emailCheck(@RequestBody CheckRequestDTO checkRequestDTO) {
+        boolean isValid = authService.isValidEmail(checkRequestDTO.getEmail());
         if (isValid) {
-            return new ResponseEntity<>(new CheckResponse(isValid), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(new CheckResponse(isValid), HttpStatus.CONFLICT);
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @PostMapping("/nickNameCheck")
-    public ResponseEntity<CheckResponse> nickNameCheck(@RequestBody CheckRequest checkRequest) {
-        boolean isValid = userService.isValidNickName(checkRequest.getNickName());
+    public ResponseEntity nickNameCheck(@RequestBody CheckRequestDTO checkRequestDTO) {
+        boolean isValid = authService.isValidNickName(checkRequestDTO.getNickName());
         if (isValid) {
-            return new ResponseEntity<>(new CheckResponse(isValid), HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(new CheckResponse(isValid), HttpStatus.CONFLICT);
-    }
-
-    @ResponseBody
-    @RequiredArgsConstructor
-    @Getter
-    private static class CheckResponse {
-        private final boolean isValid;
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
     @Getter
-    @ResponseBody
-    @RequiredArgsConstructor
-    private static class SignUpResponse {
-        private final boolean isComplete;
-    }
-
-    @Getter
-    private static class CheckRequest {
+    private static class CheckRequestDTO {
         private String email;
         private String nickName;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class SignUpDTO {
+        @NotNull
+        private String email;
+        @NotNull
+        private String password;
+        @NotNull
+        private String nickName;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class SignInDTO {
+        @NotNull
+        private String email;
+        @NotNull
+        private String password;
     }
 
 }
