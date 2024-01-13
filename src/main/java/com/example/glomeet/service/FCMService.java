@@ -1,17 +1,21 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.dto.NotificationRequestDTO;
+import com.example.glomeet.entity.FCMToken;
+import com.example.glomeet.exception.FCMTokenNotFoundException;
 import com.example.glomeet.mapper.FCMMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -22,6 +26,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class FCMService {
@@ -33,8 +38,13 @@ public class FCMService {
     public void sendNotification(@NonNull NotificationRequestDTO notificationRequestDTO)
             throws IOException {
         OkHttpClient client = new OkHttpClient();
-        String targetToken = fcmMapper.findTokenByEmail(notificationRequestDTO.getEmail()).getToken();
-        String message = makeMessage(targetToken, notificationRequestDTO.getTitle(), notificationRequestDTO.getBody());
+        Optional<FCMToken> targetToken = fcmMapper.findTokenByEmail(notificationRequestDTO.getEmail());
+        if (targetToken.isEmpty()) {
+            log.error("토큰이 존재하지 않음 : " + notificationRequestDTO.getEmail());
+            throw new FCMTokenNotFoundException("토큰이 존재하지 않는 사용자 : 알림을 보낼 수 없음");
+        }
+        String message = makeMessage(targetToken.get().getToken(), notificationRequestDTO.getTitle(),
+                notificationRequestDTO.getBody());
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
@@ -43,8 +53,6 @@ public class FCMService {
                 .url("https://fcm.googleapis.com/v1/projects/" + PROJECT_ID + "/messages:send")
                 .build();
         Response response = client.newCall(request).execute();
-        System.out.println(response.body().string());
-        System.out.println(response.body());
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
@@ -57,7 +65,6 @@ public class FCMService {
                         .token(targetToken)
                         .build())
                 .build();
-        System.out.println("@@@@@");
         System.out.println(fcmMessage.toString());
         return objectMapper.writeValueAsString(fcmMessage);
     }
