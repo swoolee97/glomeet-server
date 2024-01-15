@@ -1,8 +1,12 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.auth.JwtTokenProvider;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
+import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -19,9 +23,11 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final UserMapper userMapper;
+    private final RefreshTokenMapper refreshTokenMapper;
     private final UserDetailsServiceImpl customUserDetails;
     private final PasswordEncoder encoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public boolean signUp(SignUpDTO signUpDTO) {
         // 두 유저가 같은 이메일로 동시에 회원가입한다면 오류가 날 수 있기 때문에
@@ -36,7 +42,7 @@ public class AuthService {
         return false;
     }
 
-    public Authentication signIn(SignInDTO signInDTO) {
+    public Map<String, String> signIn(SignInDTO signInDTO) {
         UserDetails user = customUserDetails.loadUserByUsername(signInDTO.getEmail());
         if (!encoder.matches(signInDTO.getPassword(), user.getPassword())) {
             throw new BadCredentialsException("비밀번호가 일치하지 않습니다");
@@ -47,8 +53,14 @@ public class AuthService {
                 signInDTO.getPassword()
         );
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+        String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
 
-        return authentication;
+        refreshTokenMapper.insertToken(refreshToken, signInDTO.getEmail());
+        Map<String, String> tokenMap = new HashMap<>();
+        tokenMap.put("accessToken", accessToken);
+        tokenMap.put("refreshToken", refreshToken);
+        return tokenMap;
     }
 
     public boolean isValidEmail(String email) {

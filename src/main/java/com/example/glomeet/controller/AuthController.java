@@ -6,6 +6,7 @@ import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.service.AuthService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import java.util.Map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -13,10 +14,10 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -43,9 +44,8 @@ public class AuthController {
 
     @PostMapping("/signIn")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
-        Authentication authentication = authService.signIn(signInDTO);
-        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
-        return new ResponseEntity<>(new TokenDTO(accessToken), HttpStatus.OK);
+        Map<String, String> tokens = authService.signIn(signInDTO);
+        return new ResponseEntity<>(tokens, HttpStatus.OK);
     }
 
     @PostMapping("/emailCheck")
@@ -66,10 +66,17 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+
     @Getter
     private static class CheckRequestDTO {
         private String email;
         private String nickName;
+    }
+
+    @ResponseBody
+    @RequiredArgsConstructor
+    private static class TokenResponseDTO {
+        private final TokenDTO tokenDTO;
     }
 
     @Setter

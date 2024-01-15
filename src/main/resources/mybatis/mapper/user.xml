@@ -9,10 +9,10 @@
     <select id="nickNameCheck" resultType="int">
         SELECT COUNT(*)
         FROM user
-        WHERE nick_name = #{nickName}
+        WHERE nickName = #{nickName}
     </select>
     <insert id="insertUser" parameterType="com.example.glomeet.dto.UserDTO">
-        INSERT INTO user(email, password, nick_name)
+        INSERT INTO user(email, password, nickName)
         VALUES (#{email}, #{password}, #{nickName})
     </insert>
     <select id="findUserByEmail" parameterType="com.example.glomeet.dto.UserDTO">

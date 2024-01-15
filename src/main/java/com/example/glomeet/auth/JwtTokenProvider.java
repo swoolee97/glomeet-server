@@ -36,14 +36,14 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String generateAccessToken(Authentication authentication) {
+    public String generateToken(Authentication authentication, long expireMills) {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
         long now = (new Date()).getTime();
 
-        Date accessTokenExpiresIn = new Date(now + 86400000);
+        Date accessTokenExpiresIn = new Date(now + expireMills);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim("auth", authorities)
@@ -53,13 +53,12 @@ public class JwtTokenProvider {
         return accessToken;
     }
 
+    public String generateAccessToken(Authentication authentication) {
+        return generateToken(authentication, 1000 * 60 * 60 * 2);
+    }
+
     public String generateRefreshToken(Authentication authentication) {
-        long now = (new Date()).getTime();
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-        return refreshToken;
+        return generateToken(authentication, 1000 * 60 * 60 * 24 * 15);
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
