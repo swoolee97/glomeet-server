@@ -65,7 +65,6 @@ public class AuthService {
 
     public boolean signOut(String userEmail) {
         int result = refreshTokenMapper.deleteToken(userEmail);
-        System.out.println(result);
         return result > 0;
     }
 
