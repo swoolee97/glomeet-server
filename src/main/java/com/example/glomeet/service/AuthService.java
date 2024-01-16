@@ -55,7 +55,7 @@ public class AuthService {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
-
+        refreshTokenMapper.deleteToken(signInDTO.getEmail());
         refreshTokenMapper.insertToken(refreshToken, signInDTO.getEmail());
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
