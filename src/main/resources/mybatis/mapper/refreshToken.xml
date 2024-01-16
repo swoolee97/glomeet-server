@@ -10,4 +10,14 @@
         FROM refreshToken
         WHERE userEmail = #{email}
     </delete>
+    <select id="findTokenByEmail">
+        SELECT token
+        FROM refreshToken
+        WHERE userEmail = #{email}
+    </select>
+    <update id="updateRefreshToken">
+        UPDATE refreshToken
+        SET token = #{refreshToken}
+        WHERE userEmail = #{email}
+    </update>
 </mapper>
