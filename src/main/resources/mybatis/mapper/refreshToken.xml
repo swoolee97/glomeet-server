@@ -5,4 +5,9 @@
         INSERT INTO refreshToken(token, userEmail)
         VALUES (#{refreshToken}, #{userEmail})
     </insert>
+    <delete id="deleteToken">
+        DELETE
+        FROM refreshToken
+        WHERE userEmail = #{email}
+    </delete>
 </mapper>

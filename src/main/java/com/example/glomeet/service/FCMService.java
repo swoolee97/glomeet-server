@@ -78,6 +78,16 @@ public class FCMService {
         return googleCredentials.getAccessToken().getTokenValue();
     }
 
+    public boolean saveToken(String email, String fcmToken) {
+        int result = fcmMapper.insertToken(email, fcmToken);
+        return result == 1;
+    }
+
+    public boolean deleteFCMToken(String email, String fcmToken) {
+        int result = fcmMapper.deleteTokenByEmail(email, fcmToken);
+        return result == 1;
+    }
+
     @Builder
     @Getter
     @AllArgsConstructor

@@ -63,6 +63,12 @@ public class AuthService {
         return tokenMap;
     }
 
+    public boolean signOut(String userEmail) {
+        int result = refreshTokenMapper.deleteToken(userEmail);
+        System.out.println(result);
+        return result > 0;
+    }
+
     public boolean isValidEmail(String email) {
         int count = userMapper.emailCheck(email);
         return count == 0;

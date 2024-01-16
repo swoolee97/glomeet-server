@@ -4,6 +4,7 @@ import com.example.glomeet.auth.JwtTokenProvider;
 import com.example.glomeet.dto.TokenDTO;
 import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.service.AuthService;
+import com.example.glomeet.service.FCMService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final FCMService fcmService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signUp")
@@ -45,7 +47,15 @@ public class AuthController {
     @PostMapping("/signIn")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
         Map<String, String> tokens = authService.signIn(signInDTO);
+        fcmService.saveToken(signInDTO.getEmail(), signInDTO.getFcmToken());
         return new ResponseEntity<>(tokens, HttpStatus.OK);
+    }
+
+    @PostMapping("/signOut")
+    public ResponseEntity<?> signOut(@RequestBody SignOutDTO signOutDTO) {
+        boolean result = authService.signOut(signOutDTO.getEmail());
+        fcmService.deleteFCMToken(signOutDTO.getEmail(), signOutDTO.getFcmToken());
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PostMapping("/emailCheck")
@@ -99,6 +109,16 @@ public class AuthController {
         private String email;
         @NotNull
         private String password;
+        @NotNull
+        private String fcmToken;
+    }
+
+    @Getter
+    public static class SignOutDTO {
+        @NotNull
+        private String email;
+        @NotNull
+        private String fcmToken;
     }
 
 }

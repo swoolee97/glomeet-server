@@ -6,4 +6,15 @@
         FROM FCMToken
         where userEmail = #{email}
     </select>
+
+    <delete id="deleteTokenByEmail">
+        DELETE
+        FROM FCMToken
+        WHERE userEmail = #{email}
+          AND token = #{token}
+    </delete>
+    <insert id="insertToken">
+        INSERT INTO FCMToken(userEmail, token)
+        VALUES (#{email}, #{token})
+    </insert>
 </mapper>

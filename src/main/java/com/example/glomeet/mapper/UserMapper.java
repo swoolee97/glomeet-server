@@ -15,4 +15,5 @@ public interface UserMapper {
     public int insertUser(SignUpDTO signUpDTO);
 
     public UserDTO findUserByEmail(String email);
+    
 }
