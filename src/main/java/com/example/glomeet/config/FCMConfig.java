@@ -17,7 +17,7 @@ public class FCMConfig {
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
         ClassPathResource resource = new ClassPathResource(
-                "firebase/glomeet-f03b2-firebase-adminsdk-ghmi5-16c34175e5.json");
+                "firebase/glomeet-212d3-firebase-adminsdk-9mrhi-70a0a06613.json");
         InputStream inputStream = resource.getInputStream();
         FirebaseApp firebaseApp = null;
         List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();

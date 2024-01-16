@@ -70,7 +70,7 @@ public class FCMService {
 
     private String getAccessToken() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(
-                "firebase/glomeet-f03b2-firebase-adminsdk-ghmi5-16c34175e5.json");
+                "firebase/glomeet-212d3-firebase-adminsdk-9mrhi-70a0a06613.json");
 
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(classPathResource.getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
