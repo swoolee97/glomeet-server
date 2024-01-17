@@ -1,6 +1,6 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.dto.NotificationRequestDTO;
+import com.example.glomeet.dto.PushMessageRequestDTO;
 import com.example.glomeet.service.FCMService;
 import java.io.IOException;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +16,9 @@ public class FCMController {
     private final FCMService fcmService;
 
     @PostMapping("/test")
-    public void test(@RequestBody NotificationRequestDTO notificationRequestDTO)
+    public void test(@RequestBody PushMessageRequestDTO pushMessageRequestDTO)
             throws IOException {
-        fcmService.sendNotification(notificationRequestDTO);
+        fcmService.sendPushMessage(pushMessageRequestDTO);
     }
-
 
 }

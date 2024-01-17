@@ -1,9 +1,10 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.dto.NotificationRequestDTO;
+import com.example.glomeet.dto.PushMessageRequestDTO;
 import com.example.glomeet.entity.FCMToken;
 import com.example.glomeet.exception.FCMTokenNotFoundException;
 import com.example.glomeet.mapper.FCMMapper;
+import com.example.glomeet.service.FCMService.FCMMessage.Data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -35,16 +36,16 @@ public class FCMService {
     @Value("${fcm.project.id}")
     private String PROJECT_ID;
 
-    public void sendNotification(@NonNull NotificationRequestDTO notificationRequestDTO)
+    public void sendPushMessage(@NonNull PushMessageRequestDTO pushMessageRequestDTO)
             throws IOException {
         OkHttpClient client = new OkHttpClient();
-        Optional<FCMToken> targetToken = fcmMapper.findTokenByEmail(notificationRequestDTO.getEmail());
+        Optional<FCMToken> targetToken = fcmMapper.findTokenByEmail(pushMessageRequestDTO.getEmail());
         if (targetToken.isEmpty()) {
-            log.error("토큰이 존재하지 않음 : " + notificationRequestDTO.getEmail());
+            log.error("토큰이 존재하지 않음 : " + pushMessageRequestDTO.getEmail());
             throw new FCMTokenNotFoundException("토큰이 존재하지 않는 사용자 : 알림을 보낼 수 없음");
         }
-        String message = makeMessage(targetToken.get().getToken(), notificationRequestDTO.getTitle(),
-                notificationRequestDTO.getBody());
+        String message = makeMessage(targetToken.get().getToken(), pushMessageRequestDTO.getTitle(),
+                pushMessageRequestDTO.getBody());
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
@@ -58,7 +59,7 @@ public class FCMService {
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FCMMessage fcmMessage = FCMMessage.builder()
                 .message(FCMMessage.Message.builder()
-                        .notification(FCMMessage.Notification.builder()
+                        .data(Data.builder()
                                 .title(title)
                                 .body(body)
                                 .build())
@@ -91,21 +92,21 @@ public class FCMService {
     @Builder
     @Getter
     @AllArgsConstructor
-    private static class FCMMessage {
+    public static class FCMMessage {
         private Message message;
 
         @Builder
         @AllArgsConstructor
         @Getter
         public static class Message {
-            private Notification notification;
+            private Data data;
             private String token;
         }
 
         @Builder
         @AllArgsConstructor
         @Getter
-        public static class Notification {
+        public static class Data {
             private String title;
             private String body;
         }
