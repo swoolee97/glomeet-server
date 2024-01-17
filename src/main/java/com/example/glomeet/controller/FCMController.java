@@ -1,6 +1,6 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.dto.NotificationRequestDTO;
+import com.example.glomeet.dto.PushMessageRequestDTO;
 import com.example.glomeet.entity.FCMToken;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.service.FCMService;
@@ -20,10 +20,10 @@ public class FCMController {
     private final FCMService fcmService;
 
     @PostMapping("/test")
-    public void test(@RequestBody NotificationRequestDTO notificationRequestDTO)
+    public void test(@RequestBody PushMessageRequestDTO pushMessageRequestDTO)
             throws IOException, FirebaseMessagingException {
-        fcmService.sendNotification(notificationRequestDTO);
-        FCMToken fcmToken = fcmMapper.findTokenByEmail(notificationRequestDTO.getEmail());
+        fcmService.sendPushMessage(pushMessageRequestDTO);
+        FCMToken fcmToken = fcmMapper.findTokenByEmail(pushMessageRequestDTO.getEmail());
     }
 
 }

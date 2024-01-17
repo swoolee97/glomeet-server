@@ -1,7 +1,8 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.dto.NotificationRequestDTO;
+import com.example.glomeet.dto.PushMessageRequestDTO;
 import com.example.glomeet.mapper.FCMMapper;
+import com.example.glomeet.service.FCMService.FCMMessage.Data;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
@@ -30,11 +31,11 @@ public class FCMService {
     @Value("${fcm.project.id}")
     private String PROJECT_ID;
 
-    public void sendNotification(@NonNull NotificationRequestDTO notificationRequestDTO)
+    public void sendPushMessage(@NonNull PushMessageRequestDTO pushMessageRequestDTO)
             throws IOException {
         OkHttpClient client = new OkHttpClient();
-        String targetToken = fcmMapper.findTokenByEmail(notificationRequestDTO.getEmail()).getToken();
-        String message = makeMessage(targetToken, notificationRequestDTO.getTitle(), notificationRequestDTO.getBody());
+        String targetToken = fcmMapper.findTokenByEmail(pushMessageRequestDTO.getEmail()).getToken();
+        String message = makeMessage(targetToken, pushMessageRequestDTO.getTitle(), pushMessageRequestDTO.getBody());
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
@@ -50,7 +51,7 @@ public class FCMService {
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
         FCMMessage fcmMessage = FCMMessage.builder()
                 .message(FCMMessage.Message.builder()
-                        .notification(FCMMessage.Notification.builder()
+                        .data(Data.builder()
                                 .title(title)
                                 .body(body)
                                 .build())
@@ -64,7 +65,7 @@ public class FCMService {
 
     private String getAccessToken() throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(
-                "firebase/glomeet-f03b2-firebase-adminsdk-ghmi5-16c34175e5.json");
+                "firebase/glomeet-212d3-firebase-adminsdk-9mrhi-70a0a06613.json");
 
         GoogleCredentials googleCredentials = GoogleCredentials.fromStream(classPathResource.getInputStream())
                 .createScoped(List.of("https://www.googleapis.com/auth/cloud-platform"));
@@ -75,21 +76,21 @@ public class FCMService {
     @Builder
     @Getter
     @AllArgsConstructor
-    private static class FCMMessage {
+    public static class FCMMessage {
         private Message message;
 
         @Builder
         @AllArgsConstructor
         @Getter
         public static class Message {
-            private Notification notification;
+            private Data data;
             private String token;
         }
 
         @Builder
         @AllArgsConstructor
         @Getter
-        public static class Notification {
+        public static class Data {
             private String title;
             private String body;
         }
