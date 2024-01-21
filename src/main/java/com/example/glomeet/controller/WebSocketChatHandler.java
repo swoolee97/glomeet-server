@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -60,7 +61,18 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        sessions.remove(session);
+        String email = extractEmailFromSession(session);
+        List<String> chatRoomIdList = chatService.findChatRoomByEmail(email);
+        removeSession(chatRoomIdList, session);
+    }
+
+    private void removeSession(List<String> chatRoomIdList, WebSocketSession session) {
+        for (String chatRoomId : chatRoomIdList) {
+            Optional<Set<WebSocketSession>> sessions = Optional.ofNullable(chatRoomSessions.get(chatRoomId));
+            if (sessions.isPresent()) {
+                sessions.get().remove(session);
+            }
+        }
     }
 
     private String extractEmailFromSession(WebSocketSession session) {
