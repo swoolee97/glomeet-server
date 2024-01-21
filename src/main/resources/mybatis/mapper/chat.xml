@@ -15,7 +15,7 @@
     <insert id="insertChatMessage">
 
     </insert>
-    <select id="findChatRoomByEmail" resultType="java.lang.Integer">
+    <select id="findChatRoomByEmail" resultType="java.lang.String">
         SELECT id
         FROM chatRoom
                  INNER JOIN chatUser

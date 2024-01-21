@@ -24,7 +24,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     // 로그인 되어있는 유저(웹소켓에 접속되어있는 유저)
     private final Set<WebSocketSession> sessions;
     // 채팅방 마다 유저를 담음  /  key : chatRoomId, value : 채팅방 유저 집합
-    private final Map<Integer, Set<WebSocketSession>> chatRoomSessions = new HashMap<>();
+    private final Map<String, Set<WebSocketSession>> chatRoomSessions = new HashMap<>();
     private final ObjectMapper objectMapper;
     private final ChatService chatService;
 
@@ -32,12 +32,12 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         String email = extractEmailFromSession(session);
-        List<Integer> chatRoomIdList = chatService.findChatRoomByEmail(email);
+        List<String> chatRoomIdList = chatService.findChatRoomByEmail(email);
         addSession(chatRoomIdList, session);
     }
 
-    private void addSession(List<Integer> chatRoomIdList, WebSocketSession session) {
-        for (int chatRoomId : chatRoomIdList) {
+    private void addSession(List<String> chatRoomIdList, WebSocketSession session) {
+        for (String chatRoomId : chatRoomIdList) {
             chatRoomSessions.putIfAbsent(chatRoomId, new HashSet<>());
             chatRoomSessions.get(chatRoomId).add(session);
         }
@@ -47,7 +47,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         String payload = message.getPayload();
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
-        int chatRoomId = chatMessage.getChatRoomId();
+        String chatRoomId = chatMessage.getChatRoomId();
 
         chatRoomSessions.get(chatRoomId).forEach(eachSession -> {
             try {

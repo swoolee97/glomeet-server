@@ -26,6 +26,7 @@ public class ChatController {
 
     @PostMapping("/list")
     public ResponseEntity<List<ChatRoomInfoDTO>> extractChatList(@RequestBody Map<String, String> requestBody) {
+        System.out.println("@@@@@@@@@@@@@");
         System.out.println(requestBody.get("email"));
         List<ChatRoomInfoDTO> chatRoomInfos = chatService.findChatRoomInfoByEmail(requestBody.get("email"));
         return new ResponseEntity<>(chatRoomInfos, HttpStatus.OK);

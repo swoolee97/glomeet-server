@@ -15,7 +15,7 @@ public interface ChatMapper {
 
     void insertChatMessage(ChatMessage chatMessage);
 
-    List<Integer> findChatRoomByEmail(String email);
+    List<String> findChatRoomByEmail(String email);
 
     List<ChatRoomInfoDTO> findChatRoomInfoByEmail(String email);
 }

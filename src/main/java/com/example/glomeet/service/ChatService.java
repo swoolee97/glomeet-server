@@ -25,7 +25,7 @@ public class ChatService {
         chatMapper.deleteChatRoom();
     }
 
-    public List<Integer> findChatRoomByEmail(String email) {
+    public List<String> findChatRoomByEmail(String email) {
         return chatMapper.findChatRoomByEmail(email);
     }
 

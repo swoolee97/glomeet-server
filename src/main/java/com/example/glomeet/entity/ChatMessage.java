@@ -8,5 +8,5 @@ import lombok.RequiredArgsConstructor;
 public class ChatMessage {
     private final String message;
     private final String senderEmail;
-    private final int chatRoomId;
+    private final String chatRoomId;
 }
