@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.glomeet.mapper.ChatMapper">
+    <insert id="insertChatRoom">
+
+    </insert>
+
+    <delete id="deleteChatRoom">
+
+    </delete>
+    <insert id="insertChatUser">
+        INSERT INTO chatRoom
+        VALUES (#{chatRoomId}, #{userEmail})
+    </insert>
+    <insert id="insertChatMessage">
+
+    </insert>
+    <select id="findChatRoomByEmail" resultType="java.lang.Integer">
+        SELECT id
+        FROM chatRoom
+                 INNER JOIN chatUser
+                            ON chatRoom.id = chatUser.chatRoomId
+        WHERE chatUser.userEmail = #{email}
+          AND chatRoom.roomStatus = 'ACTIVE'
+    </select>
+    <select id="findChatRoomInfoByEmail" resultMap="chatRoomInfo">
+        SELECT chatMessage.chatRoomId AS id, chatMessage.message, b.maxSendAt AS sendAt
+        FROM chatMessage
+                 INNER JOIN
+             (SELECT chatRoomId,
+                     MAX(sendAt) AS maxSendAt
+              FROM chatMessage
+              WHERE chatRoomId IN (SELECT chatUser.chatRoomId
+                                   FROM chatUser
+                                   WHERE chatUser.userEmail = 'aaaa')
+              GROUP BY chatRoomId) AS b
+             ON chatMessage.chatRoomId = b.chatRoomId
+                 INNER JOIN chatRoom
+                            ON chatMessage.chatRoomId = chatRoom.id
+        WHERE chatMessage.sendAt = b.maxSendAt
+          AND chatRoom.roomStatus = 'ACTIVE'
+        ORDER BY maxSendAt DESC;
+    </select>
+    <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.ChatRoomInfoDTO">
+        <id column="id" property="id"/>
+        <result column="userEmail" property="userEmail"/>
+        <result column="message" property="message"/>
+        <result column="sendAt" property="sendAt"/>
+    </resultMap>
+</mapper>
