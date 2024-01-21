@@ -24,7 +24,10 @@
           AND chatRoom.roomStatus = 'ACTIVE'
     </select>
     <select id="findChatRoomInfoByEmail" resultMap="chatRoomInfo">
-        SELECT chatMessage.chatRoomId AS id, chatMessage.message, b.maxSendAt AS sendAt
+        SELECT chatMessage.chatRoomId AS id,
+               chatMessage.message,
+               b.maxSendAt            AS sendAt,
+               chatUser.userEmail     as partnerEmail
         FROM chatMessage
                  INNER JOIN
              (SELECT chatRoomId,
@@ -32,11 +35,14 @@
               FROM chatMessage
               WHERE chatRoomId IN (SELECT chatUser.chatRoomId
                                    FROM chatUser
-                                   WHERE chatUser.userEmail = 'aaaa')
+                                   WHERE chatUser.userEmail = #{email})
               GROUP BY chatRoomId) AS b
              ON chatMessage.chatRoomId = b.chatRoomId
                  INNER JOIN chatRoom
                             ON chatMessage.chatRoomId = chatRoom.id
+                 INNER JOIN chatUser
+                            ON chatUser.userEmail != #{email}
+            AND chatMessage.chatRoomId = chatUser.chatRoomId
         WHERE chatMessage.sendAt = b.maxSendAt
           AND chatRoom.roomStatus = 'ACTIVE'
         ORDER BY maxSendAt DESC;
@@ -46,5 +52,6 @@
         <result column="userEmail" property="userEmail"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
+        <result column="partnerEmail" property="partnerEmail"/>
     </resultMap>
 </mapper>

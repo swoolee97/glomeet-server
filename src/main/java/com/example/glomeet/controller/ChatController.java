@@ -3,6 +3,7 @@ package com.example.glomeet.controller;
 import com.example.glomeet.dto.ChatRoomInfoDTO;
 import com.example.glomeet.service.ChatService;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +25,9 @@ public class ChatController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<List<ChatRoomInfoDTO>> extractChatList(@RequestBody String email) {
-        List<ChatRoomInfoDTO> chatRoomInfos = chatService.findChatRoomInfoByEmail(email);
+    public ResponseEntity<List<ChatRoomInfoDTO>> extractChatList(@RequestBody Map<String, String> requestBody) {
+        System.out.println(requestBody.get("email"));
+        List<ChatRoomInfoDTO> chatRoomInfos = chatService.findChatRoomInfoByEmail(requestBody.get("email"));
         return new ResponseEntity<>(chatRoomInfos, HttpStatus.OK);
     }
 

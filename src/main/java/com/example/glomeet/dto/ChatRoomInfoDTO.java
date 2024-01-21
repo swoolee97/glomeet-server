@@ -7,7 +7,8 @@ import lombok.Getter;
 @Data
 @Getter
 public class ChatRoomInfoDTO {
-    private int id;
+    private String id;
     private String message;
     private Timestamp sendAt;
+    private String partnerEmail;
 }
