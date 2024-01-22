@@ -3,7 +3,6 @@ package com.example.glomeet.auth;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SecurityException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         } catch (SecurityException e) {
             throw new SecurityException(e.getMessage());
         } catch (MalformedJwtException e) {
-            throw new SecurityException(e.getMessage());
+            throw new MalformedJwtException(e.getMessage());
         } catch (ExpiredJwtException e) {
             throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
         }

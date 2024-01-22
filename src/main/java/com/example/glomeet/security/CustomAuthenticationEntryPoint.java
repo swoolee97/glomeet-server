@@ -22,6 +22,6 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding("utf-8");
-        response.getWriter().write(objectMapper.writeValueAsString("다시 로그인해주세요"));
+        response.getWriter().write(objectMapper.writeValueAsString("토큰 에러 : " + authException.getMessage()));
     }
 }

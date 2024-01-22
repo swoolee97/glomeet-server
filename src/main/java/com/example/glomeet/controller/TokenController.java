@@ -29,6 +29,11 @@ public class TokenController {
         return new ResponseEntity(reIssuedTokens, HttpStatus.OK);
     }
 
+    @PostMapping("/checkToken")
+    public void checkAccessToken() {
+
+    }
+
     @Getter
     @RequiredArgsConstructor
     public static class ReIssueRefreshTokenRequestDTO {
