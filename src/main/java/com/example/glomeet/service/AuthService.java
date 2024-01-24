@@ -69,8 +69,6 @@ public class AuthService {
     private boolean checkDuplicatedSignIn(SignInDTO signInDTO) {
         boolean isRefreshTokenAlreadyExist = refreshTokenMapper.countTokenByEmail(signInDTO.getEmail());
         boolean isFCMTokenAlreadyExist = fcmMapper.countTokenByEmail(signInDTO.getEmail());
-        System.out.println(isRefreshTokenAlreadyExist);
-        System.out.println(isFCMTokenAlreadyExist);
         return (isRefreshTokenAlreadyExist && isFCMTokenAlreadyExist);
     }
 
