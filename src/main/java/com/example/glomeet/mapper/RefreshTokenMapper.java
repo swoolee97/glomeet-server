@@ -8,4 +8,6 @@ public interface RefreshTokenMapper {
     String findTokenByEmail(String email);
 
     void updateRefreshToken(String email, String refreshToken);
+
+    boolean countTokenByEmail(String email);
 }

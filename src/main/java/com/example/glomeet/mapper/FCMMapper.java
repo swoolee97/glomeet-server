@@ -10,7 +10,9 @@ import org.springframework.stereotype.Repository;
 public interface FCMMapper {
     Optional<FCMToken> findTokenByEmail(String email);
 
-    int deleteTokenByEmail(String email, String token);
+    int deleteTokenByEmail(String email);
 
     int insertToken(String email, String token);
+
+    boolean countTokenByEmail(String email);
 }

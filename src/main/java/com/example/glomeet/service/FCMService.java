@@ -85,7 +85,7 @@ public class FCMService {
     }
 
     public boolean deleteFCMToken(String email, String fcmToken) {
-        int result = fcmMapper.deleteTokenByEmail(email, fcmToken);
+        int result = fcmMapper.deleteTokenByEmail(email);
         return result == 1;
     }
 

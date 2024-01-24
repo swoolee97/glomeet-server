@@ -43,7 +43,7 @@ public class SecurityConfig {
                             auth.requestMatchers(HttpMethod.POST, "/mail/auth").permitAll();
                             auth.requestMatchers(HttpMethod.POST, "/token/checkToken").authenticated();
                             auth.requestMatchers(HttpMethod.POST, "/token/re-issue").permitAll();
-                            auth.requestMatchers("/chat").permitAll();
+//                            auth.requestMatchers("/chat").permitAll();
                             auth.anyRequest().authenticated();
                         }
                 ).addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),

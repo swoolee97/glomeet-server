@@ -20,4 +20,10 @@
         SET token = #{refreshToken}
         WHERE userEmail = #{email}
     </update>
+
+    <select id="countTokenByEmail" resultType="java.lang.Boolean">
+        SELECT COUNT(*) >= 1
+        FROM refreshToken
+        WHERE userEmail = #{email}
+    </select>
 </mapper>

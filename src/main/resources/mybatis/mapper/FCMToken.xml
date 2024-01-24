@@ -11,10 +11,15 @@
         DELETE
         FROM FCMToken
         WHERE userEmail = #{email}
-          AND token = #{token}
     </delete>
     <insert id="insertToken">
         INSERT INTO FCMToken(userEmail, token)
         VALUES (#{email}, #{token})
     </insert>
+
+    <select id="countTokenByEmail" resultType="java.lang.Boolean">
+        SELECT COUNT(*) >= 1
+        FROM FCMToken
+        WHERE userEmail = #{email}
+    </select>
 </mapper>
