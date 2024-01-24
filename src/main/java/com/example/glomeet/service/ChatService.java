@@ -1,6 +1,7 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
+import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.entity.ChatMessage;
 import com.example.glomeet.mapper.ChatMapper;
 import java.util.List;
@@ -32,4 +33,9 @@ public class ChatService {
     public List<ChatRoomInfoDTO> findChatRoomInfoByEmail(String email) {
         return chatMapper.findChatRoomInfoByEmail(email);
     }
+
+    public List<ChatMessage> findChatMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
+        return chatMapper.findChatMessages(messageListRequestDTO);
+    }
+
 }

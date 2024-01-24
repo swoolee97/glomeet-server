@@ -1,6 +1,7 @@
 package com.example.glomeet.controller;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
+import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.service.ChatService;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +29,11 @@ public class ChatController {
     public ResponseEntity<List<ChatRoomInfoDTO>> extractChatList(@RequestBody Map<String, String> requestBody) {
         List<ChatRoomInfoDTO> chatRoomInfos = chatService.findChatRoomInfoByEmail(requestBody.get("email"));
         return new ResponseEntity<>(chatRoomInfos, HttpStatus.OK);
+    }
+
+    @PostMapping("/message-list")
+    public void getMessageListByChatRoomId(@RequestBody MessageListRequestDTO messageListRequestDTO) {
+
     }
 
 }

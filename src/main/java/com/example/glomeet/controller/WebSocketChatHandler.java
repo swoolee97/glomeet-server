@@ -32,6 +32,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     // 로그인 시 웹소켓 연결
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
+        System.out.println(session);
         String email = extractEmailFromSession(session);
         List<String> chatRoomIdList = chatService.findChatRoomByEmail(email);
         addSession(chatRoomIdList, session);
@@ -49,7 +50,7 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         String payload = message.getPayload();
         ChatMessage chatMessage = objectMapper.readValue(payload, ChatMessage.class);
         String chatRoomId = chatMessage.getChatRoomId();
-
+        chatService.saveChatMessage(chatMessage);
         chatRoomSessions.get(chatRoomId).forEach(eachSession -> {
             try {
                 eachSession.sendMessage(message);

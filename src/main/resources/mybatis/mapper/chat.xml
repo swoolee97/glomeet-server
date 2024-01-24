@@ -12,8 +12,9 @@
         INSERT INTO chatRoom
         VALUES (#{chatRoomId}, #{userEmail})
     </insert>
-    <insert id="insertChatMessage">
-
+    <insert id="insertChatMessage" parameterType="com.example.glomeet.entity.ChatMessage">
+        INSERT INTO chatMessage
+        VALUES (DEFAULT, #{message}, #{chatRoomId}, #{senderEmail}, DEFAULT);
     </insert>
     <select id="findChatRoomByEmail" resultType="java.lang.String">
         SELECT id
@@ -54,4 +55,10 @@
         <result column="sendAt" property="sendAt"/>
         <result column="partnerEmail" property="partnerEmail"/>
     </resultMap>
+
+    <select id="findChatMessages" parameterType="com.example.glomeet.dto.MessageListRequestDTO">
+        SELECT *
+        FROM chatMessage
+        WHERE chatRoomId = #{chatRoomId}
+    </select>
 </mapper>

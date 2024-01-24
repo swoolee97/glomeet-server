@@ -1,6 +1,7 @@
 package com.example.glomeet.mapper;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
+import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.entity.ChatMessage;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
@@ -18,4 +19,6 @@ public interface ChatMapper {
     List<String> findChatRoomByEmail(String email);
 
     List<ChatRoomInfoDTO> findChatRoomInfoByEmail(String email);
+
+    List<ChatMessage> findChatMessages(MessageListRequestDTO messageListRequestDTO);
 }
