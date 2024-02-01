@@ -2,6 +2,7 @@ package com.example.glomeet.controller;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
+import com.example.glomeet.entity.ChatMessage;
 import com.example.glomeet.service.ChatService;
 import com.example.glomeet.service.UserDetailsServiceImpl;
 import java.util.List;
@@ -34,8 +35,10 @@ public class ChatController {
     }
 
     @PostMapping("/message-list")
-    public void getMessageListByChatRoomId(@RequestBody MessageListRequestDTO messageListRequestDTO) {
-
+    public ResponseEntity<List<ChatMessage>> getMessageListByChatRoomId(
+            @RequestBody MessageListRequestDTO messageListRequestDTO) {
+        List<ChatMessage> list = chatService.findChatMessageByChatRoomId(messageListRequestDTO);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
 }
