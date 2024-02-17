@@ -1,5 +1,6 @@
 package com.example.glomeet.controller;
 
+import com.example.glomeet.dto.ResponseBody;
 import com.example.glomeet.exception.InvalidSchoolEmailException;
 import com.example.glomeet.service.MailService;
 import jakarta.mail.MessagingException;
@@ -29,7 +30,9 @@ public class MailController {
             mailService.sendRandomCode(email, randomCode);
             return new ResponseEntity(HttpStatus.OK);
         } catch (InvalidSchoolEmailException e) { // 학교 메일 아닐 때 예외처리
-            return new ResponseEntity(e.getMessage(), HttpStatus.CONFLICT);
+            return new ResponseEntity(ResponseBody.builder()
+                    .message(e.getMessage())
+                    .build(), HttpStatus.BAD_REQUEST);
         } catch (MessagingException e) {        // 메일 전송 알 수 없는 오류
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         }

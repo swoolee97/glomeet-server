@@ -37,7 +37,7 @@ public class MailService {
 
     private void validateSchoolEmail(String email) {
         if (!email.endsWith("ac.kr")) {
-            throw new InvalidSchoolEmailException(email + " 학교 메일만 가능합니다");
+            throw new InvalidSchoolEmailException("학교 메일만 가능합니다");
         }
     }
 
