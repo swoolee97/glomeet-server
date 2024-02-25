@@ -21,4 +21,11 @@
         WHERE email = #{email}
     </select>
 
+    <update id="updatePassword" parameterType="map">
+        UPDATE user
+        SET password = #{password}
+        WHERE email = #{email}
+    </update>
+
+
 </mapper>

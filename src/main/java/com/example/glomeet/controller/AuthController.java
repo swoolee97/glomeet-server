@@ -3,6 +3,8 @@ package com.example.glomeet.controller;
 import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.service.AuthService;
 import com.example.glomeet.service.FCMService;
+import com.example.glomeet.service.MailService;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final FCMService fcmService;
+    private final MailService mailService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDTO signUpDTO) {
@@ -72,6 +75,31 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid CheckRequestDTO checkRequestDTO) {
+        String email = checkRequestDTO.getEmail();
+        boolean isValid = authService.isValidEmail(email);
+        if (!isValid) {
+            return new ResponseEntity<>("이메일이 유효하지 않습니다.", HttpStatus.FORBIDDEN);
+        }
+
+        String randomCode = "123456";
+        try{
+            mailService.sendRandomCode(email, randomCode); // 랜덤 코드를 이메일로 전송
+        }catch(MessagingException e){
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+
+    }
+
+
+
+// 랜덤코드 만들고
+// 존재하는 이메일인지 (UserMapper에서 따오기) --
+// - 존재하지 않으면 403상태 보내기
+// - 존재하는 이메일이면 인증코드 전송
+// user db에서 update로 password변경
 
     @Getter
     private static class CheckRequestDTO {
