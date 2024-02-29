@@ -87,7 +87,7 @@ public class AuthService {
         return count == 0;
     }
 
-    public boolean updatePassword(String email, String newPassword) {
+    public boolean resetPassword(String email, String newPassword) {
         Map<String, Object> params = new HashMap<>();
         params.put("email", email);
         params.put("password", newPassword);

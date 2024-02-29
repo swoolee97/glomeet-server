@@ -78,19 +78,22 @@ public class AuthController {
     @PostMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(@RequestBody @Valid CheckRequestDTO checkRequestDTO) {
         String email = checkRequestDTO.getEmail();
-        boolean isValid = authService.isValidEmail(email);
-        if (!isValid) {
-            return new ResponseEntity<>("이메일이 유효하지 않습니다.", HttpStatus.FORBIDDEN);
+        boolean isInvalid = authService.isValidEmail(email); // 이메일이 DB에 없으면 true, 있으면 false 반환
+        if (isInvalid) {
+            // 이메일이 DB에 없으면 (즉, 유효하지 않은 이메일이면) 메일 전송을 시도하지 않고, OK 상태 반환
+            return new ResponseEntity<>(HttpStatus.OK);
+        } else {
+            // 이메일이 DB에 있으면 (즉, 유효한 이메일이면) 랜덤 코드를 이메일로 전송
+            String randomCode = "123456";
+            try {
+                mailService.sendRandomCode(email, randomCode);
+            } catch(MessagingException e) {
+                // 메일 전송 과정에서 오류가 발생하면, CONFLICT 상태 반환
+                return new ResponseEntity<>(HttpStatus.CONFLICT);
+            }
+            // 메일 전송이 성공하면, OK 상태 반환
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-
-        String randomCode = "123456";
-        try{
-            mailService.sendRandomCode(email, randomCode); // 랜덤 코드를 이메일로 전송
-        }catch(MessagingException e){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-        return new ResponseEntity<>(HttpStatus.OK);
-
     }
 
 
@@ -99,7 +102,7 @@ public class AuthController {
 // 존재하는 이메일인지 (UserMapper에서 따오기) --
 // - 존재하지 않으면 403상태 보내기
 // - 존재하는 이메일이면 인증코드 전송
-// user db에서 update로 password변경
+// user db에서 reset로 password변경
 
     @Getter
     private static class CheckRequestDTO {
