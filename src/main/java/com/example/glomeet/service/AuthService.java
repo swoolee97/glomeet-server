@@ -1,8 +1,10 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.auth.JwtTokenProvider;
+import com.example.glomeet.controller.AuthController;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
+import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
@@ -47,6 +49,16 @@ public class AuthService {
         return false;
     }
 
+    public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO){
+        boolean isRegisteredEmail = userMapper.emailCheck(resetPasswordDTO.getEmail()) == 1;
+        if (isRegisteredEmail){
+            resetPasswordDTO.setPassword(encoder.encode(resetPasswordDTO.getPassword()));
+            userMapper.updatePassword(resetPasswordDTO);
+            return true;
+        }
+        return false;
+    }
+
     public Map<String, String> signIn(@Valid SignInDTO signInDTO) {
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
                 signInDTO.getEmail(),
@@ -82,23 +94,13 @@ public class AuthService {
         return count == 0;
     }
 
+    public boolean isRegisteredEmail(String email) {
+        int count = userMapper.emailCheck(email);
+        return count == 1;
+    }
+
     public boolean isValidNickName(String nickName) {
         int count = userMapper.nickNameCheck(nickName);
         return count == 0;
-    }
-
-    public boolean resetPassword(String email, String newPassword) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("email", email);
-        params.put("password", newPassword);
-
-        String encodedNewPassword = encoder.encode("2222");
-        try {
-            userMapper.updatePassword(params);
-            return true;
-        } catch (Exception e) {
-            log.error("비밀번호 업데이트 실패: ", e);
-            return false;
-        }
     }
 }

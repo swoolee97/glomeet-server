@@ -21,7 +21,7 @@
         WHERE email = #{email}
     </select>
 
-    <update id="updatePassword" parameterType="map">
+    <update id="updatePassword" parameterType="com.example.glomeet.dto.UserDTO">
         UPDATE user
         SET password = #{password}
         WHERE email = #{email}
