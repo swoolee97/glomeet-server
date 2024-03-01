@@ -11,6 +11,7 @@
         WHERE userEmail = #{email}
     </delete>
     <select id="findTokenByEmail">
+
         SELECT token
         FROM refreshToken
         WHERE userEmail = #{email}

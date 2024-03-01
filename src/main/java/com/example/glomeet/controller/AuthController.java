@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
+
 public class AuthController {
     private final AuthService authService;
     private final FCMService fcmService;
@@ -72,6 +73,24 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PostMapping("/emailRegisteredCheck")
+    public ResponseEntity emailRegisteredCheck(@RequestBody CheckRequestDTO checkRequestDTO) {
+        boolean registered = authService.isRegisteredEmail(checkRequestDTO.getEmail()); // 가입여부 검사
+        if (registered) {
+            return new ResponseEntity<>(HttpStatus.OK); // db에 있는 메일이면 200
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED); // db에 없는 이메일이면 401
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<?> resetPassword(@RequestBody @Valid ResetPasswordDTO resetPasswordDTO) {
+        boolean result = authService.resetPassword(resetPasswordDTO);
+        if (result) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
 
     @Getter
     private static class CheckRequestDTO {
@@ -94,6 +113,16 @@ public class AuthController {
     @Setter
     @Getter
     @NoArgsConstructor
+    public static class ResetPasswordDTO {
+        @NotNull
+        private String email;
+        @NotNull
+        private String password;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
     public static class SignInDTO {
         @NotNull
         private String email;
@@ -110,5 +139,4 @@ public class AuthController {
         @NotNull
         private String fcmToken;
     }
-
 }
