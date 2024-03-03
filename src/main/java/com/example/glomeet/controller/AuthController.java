@@ -139,4 +139,16 @@ public class AuthController {
         @NotNull
         private String fcmToken;
     }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class AddInfoDTO {
+        @NotNull
+        private String interest;
+        @NotNull
+        private String country;
+        @NotNull
+        private String type;
+    }
 }

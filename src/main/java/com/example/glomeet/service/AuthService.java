@@ -5,6 +5,7 @@ import com.example.glomeet.controller.AuthController;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
 import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
+import com.example.glomeet.controller.AuthController.AddInfoDTO;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
@@ -102,5 +103,12 @@ public class AuthService {
     public boolean isValidNickName(String nickName) {
         int count = userMapper.nickNameCheck(nickName);
         return count == 0;
+    }
+
+    public boolean existAddInfo(String interest, String country, String type){
+        int existInterest = userMapper.interestCheck(interest);
+        int existCountry = userMapper.countryCheck(country);
+        int existType = userMapper.typeCheck(type);
+        return (existInterest >= 1 && existCountry >=1 && existType >=1);
     }
 }
