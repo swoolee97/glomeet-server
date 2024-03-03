@@ -105,10 +105,10 @@ public class AuthService {
         return count == 0;
     }
 
-    public boolean existAddInfo(String interest, String country, String type){
-        int existInterest = userMapper.interestCheck(interest);
-        int existCountry = userMapper.countryCheck(country);
-        int existType = userMapper.typeCheck(type);
+    public boolean existAddInfo(String email){
+        int existInterest = userMapper.interestCheck(email);
+        int existCountry = userMapper.countryCheck(email);
+        int existType = userMapper.typeCheck(email);
         return (existInterest >= 1 && existCountry >=1 && existType >=1);
     }
 }

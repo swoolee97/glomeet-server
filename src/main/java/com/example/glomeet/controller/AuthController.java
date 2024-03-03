@@ -45,7 +45,11 @@ public class AuthController {
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
         Map<String, String> tokens = authService.signIn(signInDTO);
         fcmService.saveToken(signInDTO.getEmail(), signInDTO.getFcmToken());
-        return ResponseEntity.ok().body(tokens);
+        boolean result = authService.existAddInfo(signInDTO.email);
+        if (result) {
+            return ResponseEntity.ok().body(tokens);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/signOut")
