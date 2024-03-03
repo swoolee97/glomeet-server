@@ -95,6 +95,14 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PostMapping("/inputAddInfo")
+    public ResponseEntity<?> inputAddInfo(@RequestBody AddInfoDTO addInfoDTO){
+        boolean result = authService.inputAddInfo(addInfoDTO);
+        if (result){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
 
     @Getter
     private static class CheckRequestDTO {
@@ -148,6 +156,8 @@ public class AuthController {
     @Getter
     @NoArgsConstructor
     public static class AddInfoDTO {
+        @NotNull
+        private String email;
         @NotNull
         private String interest;
         @NotNull

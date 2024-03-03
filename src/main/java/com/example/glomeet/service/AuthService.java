@@ -50,6 +50,18 @@ public class AuthService {
         return false;
     }
 
+    public boolean inputAddInfo(AddInfoDTO addInfoDTO){
+        boolean isRegisteredEmail = userMapper.emailCheck(addInfoDTO.getEmail()) == 1;
+        if (isRegisteredEmail) {
+            addInfoDTO.setInterest(addInfoDTO.getInterest());
+            addInfoDTO.setCountry(addInfoDTO.getCountry());
+            addInfoDTO.setType(addInfoDTO.getType());
+            userMapper.insertAddInfo(addInfoDTO);
+            return true;
+        }
+        return false;
+    }
+
     public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO){
         boolean isRegisteredEmail = userMapper.emailCheck(resetPasswordDTO.getEmail()) == 1;
         if (isRegisteredEmail){

@@ -43,8 +43,9 @@
     </update>
 
     <insert id="insertAddInfo" parameterType="com.example.glomeet.dto.UserDTO">
-        INSERT INTO user(interest, country, type)
-        VALUES (#{interest}, #{country}, #{type})
+        UPDATE user
+        SET interest = #{interest}, country = #{country}, type = #{type}
+        WHERE email = #{email}
     </insert>
 
 </mapper>
