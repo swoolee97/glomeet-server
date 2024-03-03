@@ -45,7 +45,7 @@ public class AuthController {
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
         Map<String, String> tokens = authService.signIn(signInDTO);
         fcmService.saveToken(signInDTO.getEmail(), signInDTO.getFcmToken());
-        boolean result = authService.existAddInfo(signInDTO.email);
+        boolean result = authService.existAdditionalInfo(signInDTO.email);
         if (result) {
             return ResponseEntity.ok().body(tokens);
         }
@@ -95,9 +95,9 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
-    @PostMapping("/inputAddInfo")
-    public ResponseEntity<?> inputAddInfo(@RequestBody AddInfoDTO addInfoDTO){
-        boolean result = authService.inputAddInfo(addInfoDTO);
+    @PostMapping("/inputAdditionalInfo")
+    public ResponseEntity<?> inputAdditionalInfo(@RequestBody AdditionalInfoDTO additionalInfoDTO){
+        boolean result = authService.inputAdditionalInfo(additionalInfoDTO);
         if (result){
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -155,7 +155,7 @@ public class AuthController {
     @Setter
     @Getter
     @NoArgsConstructor
-    public static class AddInfoDTO {
+    public static class AdditionalInfoDTO {
         @NotNull
         private String email;
         @NotNull

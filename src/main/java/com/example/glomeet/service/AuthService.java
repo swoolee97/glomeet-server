@@ -1,11 +1,10 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.auth.JwtTokenProvider;
-import com.example.glomeet.controller.AuthController;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
 import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
-import com.example.glomeet.controller.AuthController.AddInfoDTO;
+import com.example.glomeet.controller.AuthController.AdditionalInfoDTO;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
@@ -50,13 +49,13 @@ public class AuthService {
         return false;
     }
 
-    public boolean inputAddInfo(AddInfoDTO addInfoDTO){
-        boolean isRegisteredEmail = userMapper.emailCheck(addInfoDTO.getEmail()) == 1;
+    public boolean inputAdditionalInfo(AdditionalInfoDTO additionalInfoDTO){
+        boolean isRegisteredEmail = userMapper.emailCheck(additionalInfoDTO.getEmail()) == 1;
         if (isRegisteredEmail) {
-            addInfoDTO.setInterest(addInfoDTO.getInterest());
-            addInfoDTO.setCountry(addInfoDTO.getCountry());
-            addInfoDTO.setType(addInfoDTO.getType());
-            userMapper.insertAddInfo(addInfoDTO);
+            additionalInfoDTO.setInterest(additionalInfoDTO.getInterest());
+            additionalInfoDTO.setCountry(additionalInfoDTO.getCountry());
+            additionalInfoDTO.setType(additionalInfoDTO.getType());
+            userMapper.insertAdditionalInfo(additionalInfoDTO);
             return true;
         }
         return false;
@@ -117,10 +116,8 @@ public class AuthService {
         return count == 0;
     }
 
-    public boolean existAddInfo(String email){
-        int existInterest = userMapper.interestCheck(email);
-        int existCountry = userMapper.countryCheck(email);
-        int existType = userMapper.typeCheck(email);
-        return (existInterest >= 1 && existCountry >=1 && existType >=1);
+    public boolean existAdditionalInfo(String email){
+        int existAdditionalInfo = userMapper.additionalInfoCheck(email);
+        return (existAdditionalInfo >= 1);
     }
 }

@@ -11,21 +11,12 @@
         FROM user
         WHERE nickName = #{nickName}
     </select>
-    <select id="interestCheck" resultType="int">
+    <select id="additionalInfoCheck" resultType="int">
         SELECT COUNT(*)
-        FROM user
-        WHERE interest = #{interest}
+        from user
+        where email = #{email} and interest is not null and country is not null and type is not null
     </select>
-    <select id="countryCheck" resultType="int">
-        SELECT COUNT(*)
-        FROM user
-        WHERE country = #{country}
-    </select>
-    <select id="typeCheck" resultType="int">
-        SELECT COUNT(*)
-        FROM user
-        WHERE type = #{type}
-    </select>
+
     <insert id="insertUser" parameterType="com.example.glomeet.dto.UserDTO">
         INSERT INTO user(email, password, nickName)
         VALUES (#{email}, #{password}, #{nickName})
