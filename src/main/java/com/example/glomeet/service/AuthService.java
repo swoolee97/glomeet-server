@@ -1,17 +1,17 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.auth.JwtTokenProvider;
-import com.example.glomeet.controller.AuthController;
+import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
-import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
+import com.example.glomeet.entity.RefreshToken;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
+import com.example.glomeet.repository.RefreshTokenRepository;
+import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
-
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +34,7 @@ public class AuthService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
     private final FCMMapper fcmMapper;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     public boolean signUp(@Valid SignUpDTO signUpDTO) {
         // 두 유저가 같은 이메일로 동시에 회원가입한다면 오류가 날 수 있기 때문에
@@ -49,9 +50,9 @@ public class AuthService {
         return false;
     }
 
-    public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO){
+    public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO) {
         boolean isRegisteredEmail = userMapper.emailCheck(resetPasswordDTO.getEmail()) == 1;
-        if (isRegisteredEmail){
+        if (isRegisteredEmail) {
             resetPasswordDTO.setPassword(encoder.encode(resetPasswordDTO.getPassword()));
             userMapper.updatePassword(resetPasswordDTO);
             return true;
@@ -66,12 +67,12 @@ public class AuthService {
         );
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         if (checkDuplicatedSignIn(signInDTO)) {
-            refreshTokenMapper.deleteToken(signInDTO.getEmail());
+            refreshTokenRepository.delete(signInDTO.getEmail());
             fcmMapper.deleteTokenByEmail(signInDTO.getEmail());
         }
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
-        refreshTokenMapper.insertToken(refreshToken, signInDTO.getEmail());
+        refreshTokenRepository.save(new RefreshToken(signInDTO.getEmail(), refreshToken));
         Map<String, String> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
         tokenMap.put("refreshToken", refreshToken);
@@ -79,12 +80,12 @@ public class AuthService {
     }
 
     public boolean signOut(String userEmail) {
-        int result = refreshTokenMapper.deleteToken(userEmail);
-        return result > 0;
+        refreshTokenRepository.delete(userEmail);
+        return true;
     }
 
     private boolean checkDuplicatedSignIn(SignInDTO signInDTO) {
-        boolean isRefreshTokenAlreadyExist = refreshTokenMapper.countTokenByEmail(signInDTO.getEmail());
+        boolean isRefreshTokenAlreadyExist = refreshTokenRepository.findByEmail(signInDTO.getEmail()).isPresent();
         boolean isFCMTokenAlreadyExist = fcmMapper.countTokenByEmail(signInDTO.getEmail());
         return (isRefreshTokenAlreadyExist && isFCMTokenAlreadyExist);
     }
