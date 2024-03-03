@@ -4,11 +4,13 @@ import com.example.glomeet.auth.JwtTokenProvider;
 import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
+import com.example.glomeet.controller.AuthController.VerificationCheckDTO;
 import com.example.glomeet.entity.RefreshToken;
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
 import com.example.glomeet.repository.RefreshTokenRepository;
+import com.example.glomeet.repository.VerificationRepository;
 import jakarta.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,6 +37,7 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final FCMMapper fcmMapper;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final VerificationRepository verificationRepository;
 
     public boolean signUp(@Valid SignUpDTO signUpDTO) {
         // 두 유저가 같은 이메일로 동시에 회원가입한다면 오류가 날 수 있기 때문에
@@ -104,4 +107,9 @@ public class AuthService {
         int count = userMapper.nickNameCheck(nickName);
         return count == 0;
     }
+
+    public boolean checkRandomCode(VerificationCheckDTO verificationCheckDTO) {
+        return verificationRepository.checkByEmailAndRandomCode(verificationCheckDTO);
+    }
+
 }

@@ -5,8 +5,8 @@ import com.example.glomeet.exception.InvalidSchoolEmailException;
 import com.example.glomeet.service.MailService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +25,8 @@ public class MailController {
     @PostMapping("/auth")
     public ResponseEntity sendRandomCode(@RequestBody @Valid MailRequest mailRequest) {
         String email = mailRequest.getEmail();
-        String randomCode = mailRequest.getRandomCode();
         try {
-            mailService.sendRandomCode(email, randomCode);
+            mailService.sendRandomCode(email);
             return new ResponseEntity(HttpStatus.OK);
         } catch (InvalidSchoolEmailException e) { // 학교 메일 아닐 때 예외처리
             return new ResponseEntity(ResponseBody.builder()
@@ -39,11 +38,9 @@ public class MailController {
     }
 
     @Getter
-    private static class MailRequest {
-        @NonNull
-        String email;
-        @NonNull
-        String randomCode;
+    public static class MailRequest {
+        @NotNull
+        private String email;
     }
 
 }

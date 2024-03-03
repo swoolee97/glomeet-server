@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public class RefreshTokenRepository {
-    private final long REFRESH_TOKEN_EXPIRE = 1000 * 60 * 60 * 24 * 15;
+    private final long REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 15;
     private final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
     private RedisTemplate<String, Object> redisTemplate;
@@ -24,7 +24,7 @@ public class RefreshTokenRepository {
     public void save(final RefreshToken refreshToken) {
         valueOperations.set(REFRESH_TOKEN_PREFIX + refreshToken.getEmail(), refreshToken.getRefreshToken());
         redisTemplate.expire(REFRESH_TOKEN_PREFIX + refreshToken.getEmail(), REFRESH_TOKEN_EXPIRE,
-                TimeUnit.MICROSECONDS);
+                TimeUnit.SECONDS);
     }
 
     public void delete(final String email) {

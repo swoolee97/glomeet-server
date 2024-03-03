@@ -91,6 +91,23 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PostMapping("/verification-check")
+    public ResponseEntity<?> verificationCheck(@RequestBody VerificationCheckDTO verificationCheckDTO) {
+        boolean result = authService.checkRandomCode(verificationCheckDTO);
+        if (result) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
+
+    @Getter
+    public static class VerificationCheckDTO {
+        @NotNull
+        String email;
+        @NotNull
+        String randomCode;
+    }
+
 
     @Getter
     private static class CheckRequestDTO {
