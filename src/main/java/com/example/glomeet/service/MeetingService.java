@@ -1,8 +1,10 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.controller.MeetingController.MemberJoinRequestDTO;
+import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.mapper.MeetingMapper;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -35,6 +37,11 @@ public class MeetingService {
         }
 
         return true;
+    }
+
+    public List<MeetingInfoDTO> getMeetingList() {
+        List<MeetingInfoDTO> meetingList = meetingMapper.findAllMeetings();
+        return meetingList;
     }
 
     private void validateMeetingCapacity(String meetingId) {

@@ -24,4 +24,23 @@
         VALUES (#{meetingId}, #{email})
     </insert>
 
+    <resultMap id="meetingInfoResultMap" type="com.example.glomeet.dto.MeetingInfoDTO">
+        <id property="id" column="id"/>
+        <result property="capacity" column="capacity"/>
+        <result property="category" column="category"/>
+        <result property="location" column="location"/>
+        <result property="meetingDate" column="meetingDate"/>
+        <result property="url" column="url"/>
+        <result property="participants" column="participants"/>
+    </resultMap>
+
+    <select id="findAllMeetings" resultMap="meetingInfoResultMap">
+        SELECT a.id, a.capacity, a.category, a.location, a.meetingDate, a.url, count(*) participants
+        FROM meeting AS a
+                 LEFT JOIN meetingUser AS b
+                           ON a.id = b.meetingId
+        WHERE status = 'ACTIVE'
+        GROUP BY a.id;
+    </select>
+
 </mapper>
