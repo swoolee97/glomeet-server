@@ -2,7 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.glomeet.mapper.MeetingMapper">
     <insert id="insertMeeting" parameterType="com.example.glomeet.entity.Meeting">
-        INSERT INTO MEETING
+        INSERT INTO meeting
         VALUES (#{id}, #{capacity}, #{category}, #{location}, #{meetingDate}, #{url}, default, #{masterEmail})
     </insert>
+
+    <select id="countMeetingUser" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM meetingUser
+        WHERE meetingId = #{meetingId}
+    </select>
+
+    <select id="findMeetingCapacityById" resultType="int">
+        SELECT capacity
+        FROM meeting
+        WHERE id = #{meetingId}
+          AND status = 'ACTIVE' limit 1;
+    </select>
+
+    <insert id="insertMeetingUser">
+        INSERT INTO meetingUser
+        VALUES (#{meetingId}, #{email})
+    </insert>
+
 </mapper>
