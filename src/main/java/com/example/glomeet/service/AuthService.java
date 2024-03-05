@@ -52,10 +52,7 @@ public class AuthService {
     public boolean inputAdditionalInfo(AdditionalInfoDTO additionalInfoDTO){
         boolean isRegisteredEmail = userMapper.emailCheck(additionalInfoDTO.getEmail()) == 1;
         if (isRegisteredEmail) {
-            additionalInfoDTO.setInterest(additionalInfoDTO.getInterest());
-            additionalInfoDTO.setCountry(additionalInfoDTO.getCountry());
-            additionalInfoDTO.setType(additionalInfoDTO.getType());
-            userMapper.insertAdditionalInfo(additionalInfoDTO);
+            userMapper.updateAdditionalInfo(additionalInfoDTO);
             return true;
         }
         return false;

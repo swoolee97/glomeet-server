@@ -33,7 +33,7 @@
         WHERE email = #{email}
     </update>
 
-    <insert id="insertAddInfo" parameterType="com.example.glomeet.dto.UserDTO">
+    <insert id="updateAdditionalInfo" parameterType="com.example.glomeet.dto.UserDTO">
         UPDATE user
         SET interest = #{interest}, country = #{country}, type = #{type}
         WHERE email = #{email}

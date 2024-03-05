@@ -22,6 +22,6 @@ public interface UserMapper {
 
     public int additionalInfoCheck(String email);
 
-    public int insertAdditionalInfo(AdditionalInfoDTO additionalInfoDTO);
+    public int updateAdditionalInfo(AdditionalInfoDTO additionalInfoDTO);
 
 }
