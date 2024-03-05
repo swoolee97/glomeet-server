@@ -1,13 +1,11 @@
 package com.example.glomeet.mapper;
 
-import com.example.glomeet.controller.AuthController;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
 import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
 import org.apache.ibatis.annotations.Mapper;
 import org.springframework.stereotype.Repository;
-
-import java.util.Map;
+import com.example.glomeet.controller.AuthController.AdditionalInfoDTO;
 
 @Mapper
 @Repository
@@ -22,5 +20,8 @@ public interface UserMapper {
 
     public int updatePassword(ResetPasswordDTO resetPasswordDTO);
 
+    public int additionalInfoCheck(String email);
+
+    public int updateAdditionalInfo(AdditionalInfoDTO additionalInfoDTO);
 
 }

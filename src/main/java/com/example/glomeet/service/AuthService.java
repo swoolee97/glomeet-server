@@ -1,11 +1,14 @@
 package com.example.glomeet.service;
 
 import com.example.glomeet.auth.JwtTokenProvider;
-import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
+
 import com.example.glomeet.controller.AuthController.SignInDTO;
 import com.example.glomeet.controller.AuthController.SignUpDTO;
+import com.example.glomeet.controller.AuthController.ResetPasswordDTO;
+import com.example.glomeet.controller.AuthController.AdditionalInfoDTO;
 import com.example.glomeet.controller.AuthController.VerificationCheckDTO;
 import com.example.glomeet.entity.RefreshToken;
+
 import com.example.glomeet.mapper.FCMMapper;
 import com.example.glomeet.mapper.RefreshTokenMapper;
 import com.example.glomeet.mapper.UserMapper;
@@ -53,7 +56,16 @@ public class AuthService {
         return false;
     }
 
-    public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO) {
+    public boolean inputAdditionalInfo(AdditionalInfoDTO additionalInfoDTO){
+        boolean isRegisteredEmail = userMapper.emailCheck(additionalInfoDTO.getEmail()) == 1;
+        if (isRegisteredEmail) {
+            userMapper.updateAdditionalInfo(additionalInfoDTO);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean resetPassword(@Valid ResetPasswordDTO resetPasswordDTO){
         boolean isRegisteredEmail = userMapper.emailCheck(resetPasswordDTO.getEmail()) == 1;
         if (isRegisteredEmail) {
             resetPasswordDTO.setPassword(encoder.encode(resetPasswordDTO.getPassword()));
@@ -108,6 +120,11 @@ public class AuthService {
         return count == 0;
     }
 
+    public boolean existAdditionalInfo(String email){
+        int existAdditionalInfo = userMapper.additionalInfoCheck(email);
+        return (existAdditionalInfo >= 1);
+    }
+  
     public boolean checkRandomCode(VerificationCheckDTO verificationCheckDTO) {
         return verificationRepository.checkByEmailAndRandomCode(verificationCheckDTO);
     }

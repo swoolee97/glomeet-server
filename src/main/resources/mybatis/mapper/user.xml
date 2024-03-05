@@ -11,6 +11,12 @@
         FROM user
         WHERE nickName = #{nickName}
     </select>
+    <select id="additionalInfoCheck" resultType="int">
+        SELECT COUNT(*)
+        from user
+        where email = #{email} and interest is not null and country is not null and type is not null
+    </select>
+
     <insert id="insertUser" parameterType="com.example.glomeet.dto.UserDTO">
         INSERT INTO user(email, password, nickName)
         VALUES (#{email}, #{password}, #{nickName})
@@ -27,5 +33,10 @@
         WHERE email = #{email}
     </update>
 
+    <insert id="updateAdditionalInfo" parameterType="com.example.glomeet.dto.UserDTO">
+        UPDATE user
+        SET interest = #{interest}, country = #{country}, type = #{type}
+        WHERE email = #{email}
+    </insert>
 
 </mapper>

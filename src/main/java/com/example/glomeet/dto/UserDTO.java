@@ -20,4 +20,10 @@ public class UserDTO {
     private String nickName;
     @NonNull
     private String role;
+    @NonNull
+    private String interest;
+    @NonNull
+    private String country;
+    @NonNull
+    private String type;
 }

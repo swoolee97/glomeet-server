@@ -45,7 +45,11 @@ public class AuthController {
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
         Map<String, String> tokens = authService.signIn(signInDTO);
         fcmService.saveToken(signInDTO.getEmail(), signInDTO.getFcmToken());
-        return ResponseEntity.ok().body(tokens);
+        boolean result = authService.existAdditionalInfo(signInDTO.email);
+        if (result) {
+            return ResponseEntity.ok().body(tokens);
+        }
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PostMapping("/signOut")
@@ -91,6 +95,15 @@ public class AuthController {
         return new ResponseEntity<>(HttpStatus.CONFLICT);
     }
 
+    @PostMapping("/inputAdditionalInfo")
+    public ResponseEntity<?> inputAdditionalInfo(@RequestBody AdditionalInfoDTO additionalInfoDTO){
+        boolean result = authService.inputAdditionalInfo(additionalInfoDTO);
+        if (result){
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        return new ResponseEntity<>(HttpStatus.CONFLICT);
+    }
+
     @PostMapping("/verification-check")
     public ResponseEntity<?> verificationCheck(@RequestBody VerificationCheckDTO verificationCheckDTO) {
         boolean result = authService.checkRandomCode(verificationCheckDTO);
@@ -107,7 +120,6 @@ public class AuthController {
         @NotNull
         String randomCode;
     }
-
 
     @Getter
     private static class CheckRequestDTO {
@@ -155,5 +167,19 @@ public class AuthController {
         private String email;
         @NotNull
         private String fcmToken;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class AdditionalInfoDTO {
+        @NotNull
+        private String email;
+        @NotNull
+        private String interest;
+        @NotNull
+        private String country;
+        @NotNull
+        private String type;
     }
 }
