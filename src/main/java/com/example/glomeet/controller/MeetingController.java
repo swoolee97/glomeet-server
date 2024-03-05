@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -51,16 +53,11 @@ public class MeetingController {
     }
 
     @PostMapping("/chat")
-    public List<MeetingChatInfoDTO> getMeetingChatList(
-            @RequestBody @Valid MeetingChatListRequestDTO meetingChatListRequestDTO) {
-        List<MeetingChatInfoDTO> list = meetingService.getMeetingChatList(meetingChatListRequestDTO);
+    public List<MeetingChatInfoDTO> getMeetingChatList() {
+        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal()).getUsername();
+        List<MeetingChatInfoDTO> list = meetingService.getMeetingChatList(email);
         return list;
-    }
-
-    @Getter
-    public static class MeetingChatListRequestDTO {
-        @NotNull
-        private String email;
     }
 
     @Getter

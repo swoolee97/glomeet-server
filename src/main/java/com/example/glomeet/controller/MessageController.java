@@ -23,4 +23,9 @@ public class MessageController {
         chatService.saveChatMessage(chatMessage);
     }
 
+    @MessageMapping("/meeting/{meetingId}")
+    public void abc() {
+
+    }
+
 }

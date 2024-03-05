@@ -1,6 +1,5 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.controller.MeetingController.MeetingChatListRequestDTO;
 import com.example.glomeet.controller.MeetingController.MemberJoinRequestDTO;
 import com.example.glomeet.dto.MeetingChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
@@ -46,8 +45,8 @@ public class MeetingService {
         return meetingList;
     }
 
-    public List<MeetingChatInfoDTO> getMeetingChatList(MeetingChatListRequestDTO meetingChatListRequestDTO) {
-        return meetingMapper.findMeetingChatById(meetingChatListRequestDTO);
+    public List<MeetingChatInfoDTO> getMeetingChatList(String email) {
+        return meetingMapper.findMeetingChatById(email);
     }
 
     private void validateMeetingCapacity(String meetingId) {
