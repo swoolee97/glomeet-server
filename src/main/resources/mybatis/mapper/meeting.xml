@@ -3,7 +3,8 @@
 <mapper namespace="com.example.glomeet.mapper.MeetingMapper">
     <insert id="insertMeeting" parameterType="com.example.glomeet.entity.Meeting">
         INSERT INTO meeting
-        VALUES (#{id}, #{capacity}, #{category}, #{location}, #{meetingDate}, #{url}, default, #{masterEmail})
+        VALUES (#{id}, #{title}, #{capacity}, #{category}, #{location}, #{meetingDate}, #{url}, default, #{masterEmail},
+                #{comment})
     </insert>
 
     <select id="countMeetingUser" resultType="java.lang.Integer">

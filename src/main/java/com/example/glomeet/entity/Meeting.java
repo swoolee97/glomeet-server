@@ -12,6 +12,10 @@ import lombok.Setter;
 public class Meeting {
     private String id;
     @NotNull
+    private String title;
+    @NotNull
+    private String comment;
+    @NotNull
     private int capacity;
     @NotNull
     private String category;
