@@ -1,6 +1,8 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.controller.MeetingController.MeetingChatListRequestDTO;
 import com.example.glomeet.controller.MeetingController.MemberJoinRequestDTO;
+import com.example.glomeet.dto.MeetingChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.mapper.MeetingMapper;
@@ -42,6 +44,10 @@ public class MeetingService {
     public List<MeetingInfoDTO> getMeetingList() {
         List<MeetingInfoDTO> meetingList = meetingMapper.findAllMeetings();
         return meetingList;
+    }
+
+    public List<MeetingChatInfoDTO> getMeetingChatList(MeetingChatListRequestDTO meetingChatListRequestDTO) {
+        return meetingMapper.findMeetingChatById(meetingChatListRequestDTO);
     }
 
     private void validateMeetingCapacity(String meetingId) {

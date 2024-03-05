@@ -1,5 +1,6 @@
 package com.example.glomeet.controller;
 
+import com.example.glomeet.dto.MeetingChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.response.Response;
@@ -47,6 +48,19 @@ public class MeetingController {
     public ResponseEntity<?> getMeetingList() {
         List<MeetingInfoDTO> list = meetingService.getMeetingList();
         return ResponseEntity.ok().body(list);
+    }
+
+    @PostMapping("/chat")
+    public List<MeetingChatInfoDTO> getMeetingChatList(
+            @RequestBody @Valid MeetingChatListRequestDTO meetingChatListRequestDTO) {
+        List<MeetingChatInfoDTO> list = meetingService.getMeetingChatList(meetingChatListRequestDTO);
+        return list;
+    }
+
+    @Getter
+    public static class MeetingChatListRequestDTO {
+        @NotNull
+        private String email;
     }
 
     @Getter
