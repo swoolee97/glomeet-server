@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.glomeet.mapper.MeetingMapper">
+    <insert id="insertMeeting" parameterType="com.example.glomeet.entity.Meeting">
+        INSERT INTO meeting
+        VALUES (#{id}, #{title}, #{capacity}, #{category}, #{location}, #{meetingDate}, #{url}, default, #{masterEmail},
+                #{comment})
+    </insert>
+
+    <select id="countMeetingUser" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM meetingUser
+        WHERE meetingId = #{meetingId}
+    </select>
+
+    <select id="findMeetingCapacityById" resultType="int">
+        SELECT capacity
+        FROM meeting
+        WHERE id = #{meetingId}
+          AND status = 'ACTIVE' limit 1;
+    </select>
+
+    <insert id="insertMeetingUser">
+        INSERT INTO meetingUser
+        VALUES (#{meetingId}, #{email})
+    </insert>
+
+    <resultMap id="meetingInfoResultMap" type="com.example.glomeet.dto.MeetingInfoDTO">
+        <id property="id" column="id"/>
+        <result property="capacity" column="capacity"/>
+        <result property="category" column="category"/>
+        <result property="location" column="location"/>
+        <result property="meetingDate" column="meetingDate"/>
+        <result property="url" column="url"/>
+        <result property="participants" column="participants"/>
+    </resultMap>
+
+    <select id="findAllMeetings" resultMap="meetingInfoResultMap">
+        SELECT a.id, a.capacity, a.category, a.location, a.meetingDate, a.url, count(*) participants
+        FROM meeting AS a
+                 LEFT JOIN meetingUser AS b
+                           ON a.id = b.meetingId
+        WHERE status = 'ACTIVE'
+        GROUP BY a.id;
+    </select>
+
+    <resultMap id="MeetingChatResultMap" type="com.example.glomeet.dto.MeetingChatInfoDTO">
+        <id property="meetingId" column="meetingId"/>
+        <result property="title" column="title"/>
+        <result property="sendAt" column="sendAt"/>
+        <result property="lastMessage" column="lastMessage"/>
+    </resultMap>
+
+    <select id="findMeetingChatById" resultMap="MeetingChatResultMap">
+        SELECT c.title, a.meetingId, a.sendAt, if(a.sendAt >= d.joinAt, a.message, null) as lastMessage
+        FROM meetingMessage AS a
+                 LEFT JOIN meeting as c
+                           ON a.meetingId = c.id
+                 LEFT JOIN meetingUser as d
+                           ON c.id = d.meetingId
+        WHERE (a.meetingId, a.sendAt, a.id) = (SELECT b.meetingId, MAX(b.sendAt) AS maxSendAt, MAX(b.id) AS maxId
+                                               FROM meetingMessage AS b
+                                               WHERE b.meetingId = a.meetingId)
+          AND d.userEmail = #{email}
+          AND c.status = 'ACTIVE'
+        ORDER BY 3 ASC
+    </select>
+
+</mapper>
