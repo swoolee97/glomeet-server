@@ -19,4 +19,6 @@ public interface MeetingMapper {
     List<MeetingInfoDTO> findAllMeetings();
 
     List<MeetingChatInfoDTO> findMeetingChatById(String email);
+
+    List<String> findMyMeetingsIdByEmail(String email);
 }

@@ -46,10 +46,16 @@ public class MeetingController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/list")
-    public ResponseEntity<?> getMeetingList() {
-        List<MeetingInfoDTO> list = meetingService.getMeetingList();
-        return ResponseEntity.ok().body(list);
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllMeetingList() {
+        List<MeetingInfoDTO> meetingList = meetingService.getAllMeetingList();
+        return ResponseEntity.ok().body(meetingList);
+    }
+
+    @PostMapping("/my")
+    public ResponseEntity<?> getMyMeetingList() {
+        List<String> meetingList = meetingService.getMyMeetingList();
+        return ResponseEntity.ok(meetingList);
     }
 
     @PostMapping("/chat")

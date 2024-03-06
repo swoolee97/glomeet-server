@@ -40,9 +40,14 @@ public class MeetingService {
         return true;
     }
 
-    public List<MeetingInfoDTO> getMeetingList() {
+    public List<MeetingInfoDTO> getAllMeetingList() {
         List<MeetingInfoDTO> meetingList = meetingMapper.findAllMeetings();
         return meetingList;
+    }
+
+    public List<String> getMyMeetingList() {
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return meetingMapper.findMyMeetingsIdByEmail(userDetails.getUsername());
     }
 
     public List<MeetingChatInfoDTO> getMeetingChatList(String email) {

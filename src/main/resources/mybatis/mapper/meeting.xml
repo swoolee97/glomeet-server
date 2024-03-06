@@ -66,4 +66,13 @@
         ORDER BY 3 ASC
     </select>
 
+    <select id="findMyMeetingsIdByEmail">
+        SELECT a.meetingId
+        from meetingUser AS a
+                 LEFT JOIN meeting AS b
+                           ON a.meetingId = b.id
+        WHERE a.userEmail = #{email}
+          AND b.status = 'ACTIVE'
+    </select>
+
 </mapper>
