@@ -49,7 +49,7 @@ public class AuthController {
         if (result) {
             return ResponseEntity.ok().body(tokens);
         }
-        return new ResponseEntity<>(HttpStatus.CREATED);
+        return new ResponseEntity<>(tokens, HttpStatus.CREATED);
     }
 
     @PostMapping("/signOut")
@@ -96,9 +96,9 @@ public class AuthController {
     }
 
     @PostMapping("/inputAdditionalInfo")
-    public ResponseEntity<?> inputAdditionalInfo(@RequestBody AdditionalInfoDTO additionalInfoDTO){
+    public ResponseEntity<?> inputAdditionalInfo(@RequestBody AdditionalInfoDTO additionalInfoDTO) {
         boolean result = authService.inputAdditionalInfo(additionalInfoDTO);
-        if (result){
+        if (result) {
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.CONFLICT);
