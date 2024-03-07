@@ -22,7 +22,7 @@
 
     <insert id="insertMeetingUser">
         INSERT INTO meetingUser
-        VALUES (#{meetingId}, #{email})
+        VALUES (#{meetingId}, #{email}, default)
     </insert>
 
     <resultMap id="meetingInfoResultMap" type="com.example.glomeet.dto.MeetingInfoDTO">
