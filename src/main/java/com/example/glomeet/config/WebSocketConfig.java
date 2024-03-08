@@ -15,7 +15,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final StompHandler stompHandler;
-    private final WebSocketHandShakeInterceptor handShakeInterceptor;
 
     // 웹소켓 연결할 때 토큰으로 인증하게하는 인터셉터
     @Override
@@ -33,7 +32,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat")
-                .setAllowedOriginPatterns("*")
-                .addInterceptors(handShakeInterceptor);
+                .setAllowedOriginPatterns("*");
     }
 }
