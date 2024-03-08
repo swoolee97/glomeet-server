@@ -1,6 +1,5 @@
 package com.example.glomeet.config;
 
-import com.example.glomeet.WebSocketHandShakeInterceptor;
 import com.example.glomeet.service.StompHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;

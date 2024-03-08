@@ -16,11 +16,12 @@ import org.springframework.stereotype.Controller;
 public class MessageController {
     private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
     private final ChatService chatService;
+    private static final String CHAT_MESSAGE_PREFIX = "chat:";
 
     @MessageMapping("/chat/{chatRoomId}")
     public void sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String chatRoomId) {
         template.convertAndSend("/sub/chat/" + chatRoomId, chatMessage);
-        chatService.saveChatMessage(chatMessage);
+        chatService.saveMessageToRedis(chatMessage);
     }
 
     @MessageMapping("/meeting/{meetingId}")

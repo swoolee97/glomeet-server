@@ -1,12 +1,15 @@
 package com.example.glomeet.entity;
 
+import java.sql.Timestamp;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Getter
-@RequiredArgsConstructor
+@Setter
 public class ChatMessage {
-    private final String message;
-    private final String senderEmail;
-    private final String chatRoomId;
+    private int id;
+    private String message;
+    private String senderEmail;
+    private String chatRoomId;
+    private Timestamp sendAt;
 }

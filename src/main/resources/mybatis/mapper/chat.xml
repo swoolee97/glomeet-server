@@ -8,14 +8,20 @@
     <delete id="deleteChatRoom">
 
     </delete>
+
     <insert id="insertChatUser">
         INSERT INTO chatRoom
         VALUES (#{chatRoomId}, #{userEmail})
     </insert>
-    <insert id="insertChatMessage" parameterType="com.example.glomeet.entity.ChatMessage">
-        INSERT INTO chatMessage
-        VALUES (DEFAULT, #{message}, #{chatRoomId}, #{senderEmail}, DEFAULT);
+
+    <insert id="insertChatMessages" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chatMessage (message, senderEmail, chatRoomId, sendAt)
+        VALUES
+        <foreach collection="chatMessages" item="chatMessage" separator=",">
+            (#{chatMessage.message}, #{chatMessage.senderEmail}, #{chatMessage.chatRoomId}, #{chatMessage.sendAt})
+        </foreach>
     </insert>
+
     <select id="findChatRoomByEmail" resultType="java.lang.String">
         SELECT id
         FROM chatRoom
@@ -24,6 +30,7 @@
         WHERE chatUser.userEmail = #{email}
           AND chatRoom.roomStatus = 'ACTIVE'
     </select>
+
     <select id="findChatRoomInfoByEmail" resultMap="chatRoomInfo">
         SELECT chatMessage.chatRoomId AS id,
                chatMessage.message,
@@ -48,6 +55,7 @@
           AND chatRoom.roomStatus = 'ACTIVE'
         ORDER BY maxSendAt DESC;
     </select>
+
     <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.ChatRoomInfoDTO">
         <id column="id" property="id"/>
         <result column="userEmail" property="userEmail"/>
@@ -61,4 +69,5 @@
         FROM chatMessage
         WHERE chatRoomId = #{chatRoomId}
     </select>
+
 </mapper>

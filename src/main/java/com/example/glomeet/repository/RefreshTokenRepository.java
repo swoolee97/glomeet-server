@@ -13,10 +13,10 @@ public class RefreshTokenRepository {
     private final long REFRESH_TOKEN_EXPIRE = 60 * 60 * 24 * 15;
     private final String REFRESH_TOKEN_PREFIX = "refreshToken:";
 
-    private RedisTemplate<String, Object> redisTemplate;
-    private ValueOperations<String, Object> valueOperations;
+    private RedisTemplate<String, String> redisTemplate;
+    private ValueOperations<String, String> valueOperations;
 
-    public RefreshTokenRepository(final RedisTemplate<String, Object> redisTemplate) {
+    public RefreshTokenRepository(final RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
         this.valueOperations = redisTemplate.opsForValue();
     }

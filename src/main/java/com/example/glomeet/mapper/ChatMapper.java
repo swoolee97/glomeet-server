@@ -14,7 +14,7 @@ public interface ChatMapper {
 
     void insertChatUser(int chatRoomId, String userEmail);
 
-    void insertChatMessage(ChatMessage chatMessage);
+    void insertChatMessages(List<ChatMessage> chatMessages);
 
     List<String> findChatRoomByEmail(String email);
 
