@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -46,13 +45,11 @@ public class ChatService {
     }
 
     public List<ChatRoomInfoDTO> findLastMessageByChatRoomId(List<ChatRoomInfoDTO> list) {
+        valueOperations = redisTemplate.opsForValue();
         list.forEach(chatRoomInfoDTO -> {
-            Optional<ChatMessage> message = chatMessageRepository.findTopByChatRoomIdOrderBySendAtDesc(
-                    chatRoomInfoDTO.getId());
-            if (message.isPresent()) {
-                chatRoomInfoDTO.setMessage(message.get().getMessage());
-                chatRoomInfoDTO.setSendAt(message.get().getSendAt());
-            }
+            ChatMessage message = (ChatMessage) valueOperations.get(LAST_MESSAGE_PREFIX + chatRoomInfoDTO.getId());
+            chatRoomInfoDTO.setMessage(message.getMessage());
+            chatRoomInfoDTO.setSendAt(message.getSendAt());
         });
         return list;
     }
