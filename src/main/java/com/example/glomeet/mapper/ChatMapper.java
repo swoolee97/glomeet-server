@@ -2,7 +2,7 @@ package com.example.glomeet.mapper;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
-import com.example.glomeet.entity.ChatMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 

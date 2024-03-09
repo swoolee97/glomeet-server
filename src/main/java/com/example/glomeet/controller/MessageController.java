@@ -1,6 +1,6 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.entity.ChatMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

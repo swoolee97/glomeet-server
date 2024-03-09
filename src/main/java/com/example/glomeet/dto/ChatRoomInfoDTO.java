@@ -1,6 +1,6 @@
 package com.example.glomeet.dto;
 
-import java.sql.Timestamp;
+import java.util.Date;
 import lombok.Data;
 import lombok.Getter;
 
@@ -9,6 +9,6 @@ import lombok.Getter;
 public class ChatRoomInfoDTO {
     private String id;
     private String message;
-    private Timestamp sendAt;
+    private Date sendAt;
     private String partnerEmail;
 }

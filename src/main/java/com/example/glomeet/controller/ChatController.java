@@ -2,7 +2,7 @@ package com.example.glomeet.controller;
 
 import com.example.glomeet.dto.ChatRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
-import com.example.glomeet.entity.ChatMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.service.ChatService;
 import com.example.glomeet.service.UserDetailsServiceImpl;
 import java.util.List;
@@ -31,7 +31,8 @@ public class ChatController {
     public ResponseEntity<List<ChatRoomInfoDTO>> extractChatList() {
         String email = userDetailsServiceImpl.getUserNameByAccessToken();
         List<ChatRoomInfoDTO> chatRoomInfos = chatService.findChatRoomInfoByEmail(email);
-        return new ResponseEntity<>(chatRoomInfos, HttpStatus.OK);
+        List<ChatRoomInfoDTO> lastMessages = chatService.findLastMessageByChatRoomId(chatRoomInfos);
+        return new ResponseEntity<>(lastMessages, HttpStatus.OK);
     }
 
     @PostMapping("/message-list")

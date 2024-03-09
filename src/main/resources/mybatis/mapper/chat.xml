@@ -32,36 +32,19 @@
     </select>
 
     <select id="findChatRoomInfoByEmail" resultMap="chatRoomInfo">
-        SELECT chatMessage.chatRoomId AS id,
-               chatMessage.message,
-               b.maxSendAt            AS sendAt,
-               chatUser.userEmail     as partnerEmail
-        FROM chatMessage
-                 INNER JOIN
-             (SELECT chatRoomId,
-                     MAX(sendAt) AS maxSendAt
-              FROM chatMessage
-              WHERE chatRoomId IN (SELECT chatUser.chatRoomId
-                                   FROM chatUser
-                                   WHERE chatUser.userEmail = #{email})
-              GROUP BY chatRoomId) AS b
-             ON chatMessage.chatRoomId = b.chatRoomId
-                 INNER JOIN chatRoom
-                            ON chatMessage.chatRoomId = chatRoom.id
-                 INNER JOIN chatUser
-                            ON chatUser.userEmail != #{email}
-            AND chatMessage.chatRoomId = chatUser.chatRoomId
-        WHERE chatMessage.sendAt = b.maxSendAt
-          AND chatRoom.roomStatus = 'ACTIVE'
-        ORDER BY maxSendAt DESC;
+        select chatRoomId, userEmail
+        from chatUser
+        where userEmail != #{email}
+          and chatRoomId in (select chatRoomId from chatUser
+            where userEmail = #{email})
     </select>
 
+
     <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.ChatRoomInfoDTO">
-        <id column="id" property="id"/>
-        <result column="userEmail" property="userEmail"/>
+        <id column="chatRoomId" property="id"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
-        <result column="partnerEmail" property="partnerEmail"/>
+        <result column="userEmail" property="partnerEmail"/>
     </resultMap>
 
     <select id="findChatMessages" parameterType="com.example.glomeet.dto.MessageListRequestDTO">
