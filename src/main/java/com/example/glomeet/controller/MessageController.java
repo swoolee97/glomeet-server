@@ -1,7 +1,7 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.mongo.model.ChatMessage;
-import com.example.glomeet.service.ChatService;
+import com.example.glomeet.mongo.model.MatchingMessage;
+import com.example.glomeet.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -15,13 +15,13 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class MessageController {
     private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
-    private final ChatService chatService;
+    private final MatchingService matchingService;
     private static final String CHAT_MESSAGE_PREFIX = "chat:";
 
-    @MessageMapping("/chat/{chatRoomId}")
-    public void sendMessage(@Payload ChatMessage chatMessage, @DestinationVariable String chatRoomId) {
-        template.convertAndSend("/sub/chat/" + chatRoomId, chatMessage);
-        chatService.saveMessageToRedis(chatMessage);
+    @MessageMapping("/chat/{matchingRoomId}")
+    public void sendMessage(@Payload MatchingMessage matchingMessage, @DestinationVariable String matchingRoomId) {
+        template.convertAndSend("/sub/chat/" + matchingRoomId, matchingMessage);
+        matchingService.saveMessageToRedis(matchingMessage);
     }
 
     @MessageMapping("/meeting/{meetingId}")

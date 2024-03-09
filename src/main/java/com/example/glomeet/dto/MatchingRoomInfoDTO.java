@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Data
 @Getter
-public class ChatRoomInfoDTO {
+public class MatchingRoomInfoDTO {
     private String id;
     private String message;
     private Date sendAt;

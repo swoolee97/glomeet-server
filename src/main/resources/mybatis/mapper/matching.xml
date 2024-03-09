@@ -1,28 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.glomeet.mapper.ChatMapper">
-    <insert id="insertChatRoom">
+<mapper namespace="com.example.glomeet.mapper.MatchingMapper">
+    <insert id="insertMatchingRoom">
 
     </insert>
 
-    <delete id="deleteChatRoom">
+    <delete id="deleteMatchingRoom">
 
     </delete>
 
-    <insert id="insertChatUser">
+    <insert id="insertMatchingUser">
         INSERT INTO chatRoom
         VALUES (#{chatRoomId}, #{userEmail})
     </insert>
 
     <insert id="insertChatMessages" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO chatMessage (message, senderEmail, chatRoomId, sendAt)
+        INSERT INTO matchingMessage (message, senderEmail, chatRoomId, sendAt)
         VALUES
-        <foreach collection="chatMessages" item="chatMessage" separator=",">
-            (#{chatMessage.message}, #{chatMessage.senderEmail}, #{chatMessage.chatRoomId}, #{chatMessage.sendAt})
+        <foreach collection="matchingMessages" item="matchingMessage" separator=",">
+            (#{matchingMessage.message}, #{matchingMessage.senderEmail}, #{matchingMessage.chatRoomId},
+            #{matchingMessage.sendAt})
         </foreach>
     </insert>
 
-    <select id="findChatRoomByEmail" resultType="java.lang.String">
+    <select id="findMatchingRoomByEmail" resultType="java.lang.String">
         SELECT id
         FROM chatRoom
                  INNER JOIN chatUser
@@ -31,7 +32,7 @@
           AND chatRoom.roomStatus = 'ACTIVE'
     </select>
 
-    <select id="findChatRoomInfoByEmail" resultMap="chatRoomInfo">
+    <select id="findMatchingRoomInfoByEmail" resultMap="chatRoomInfo">
         select chatRoomId, userEmail
         from chatUser
         where userEmail != #{email}
@@ -40,7 +41,7 @@
     </select>
 
 
-    <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.ChatRoomInfoDTO">
+    <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.MatchingRoomInfoDTO">
         <id column="chatRoomId" property="id"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
@@ -49,7 +50,7 @@
 
     <select id="findChatMessages" parameterType="com.example.glomeet.dto.MessageListRequestDTO">
         SELECT *
-        FROM chatMessage
+        FROM matchingMessage
         WHERE chatRoomId = #{chatRoomId}
     </select>
 
