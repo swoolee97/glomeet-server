@@ -2,7 +2,7 @@ package com.example.glomeet.controller;
 
 import com.example.glomeet.dto.MatchingRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
-import com.example.glomeet.mongo.model.MatchingMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.service.MatchingService;
 import com.example.glomeet.service.UserDetailsServiceImpl;
 import java.util.List;
@@ -36,9 +36,9 @@ public class MatchingController {
     }
 
     @PostMapping("/message-list")
-    public ResponseEntity<List<MatchingMessage>> getMessageListByChatRoomId(
+    public ResponseEntity<List<ChatMessage>> getMessageListByChatRoomId(
             @RequestBody MessageListRequestDTO messageListRequestDTO) {
-        List<MatchingMessage> list = matchingService.MatchingMessageByChatRoomId(messageListRequestDTO);
+        List<ChatMessage> list = matchingService.MatchingMessageByChatRoomId(messageListRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

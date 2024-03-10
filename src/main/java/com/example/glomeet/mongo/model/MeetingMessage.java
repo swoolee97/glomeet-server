@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Getter
 @Setter
 @AllArgsConstructor
-@Document(collection = "meetingMessage")
+@Document(collection = "chatMessage")
 public class MeetingMessage {
 
     @Id

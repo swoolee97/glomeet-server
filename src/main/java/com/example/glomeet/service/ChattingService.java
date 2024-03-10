@@ -1,6 +1,6 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.mongo.model.MatchingMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -17,21 +17,21 @@ public class ChattingService {
     private final RedisTemplate<String, Object> redisTemplate;
     private ValueOperations<String, Object> valueOperations;
 
-    public void saveMessageToRedis(MatchingMessage matchingMessage) {
+    public void saveMessageToRedis(ChatMessage chatMessage) {
         Instant instant = Instant.now().atZone(ZoneId.of("Asia/Seoul")).toInstant();
         Timestamp timestamp = Timestamp.from(instant);
-        matchingMessage.setSendAt(timestamp);
-        addMessageToRedis(matchingMessage);
-        saveLastMessage(matchingMessage);
+        chatMessage.setSendAt(timestamp);
+        addMessageToRedis(chatMessage);
+        saveLastMessage(chatMessage);
     }
 
-    public void saveLastMessage(MatchingMessage matchingMessage) {
+    public void saveLastMessage(ChatMessage chatMessage) {
         valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(LAST_MESSAGE_PREFIX + matchingMessage.getMatchingRoomId(), matchingMessage);
+        valueOperations.set(LAST_MESSAGE_PREFIX + chatMessage.getRoomId(), chatMessage);
     }
 
-    public void addMessageToRedis(MatchingMessage matchingMessage) {
+    public void addMessageToRedis(ChatMessage chatMessage) {
         redisTemplate.opsForList()
-                .rightPush(MESSAGE_LIST_PREFIX + matchingMessage.getMatchingRoomId(), matchingMessage);
+                .rightPush(MESSAGE_LIST_PREFIX + chatMessage.getRoomId(), chatMessage);
     }
 }

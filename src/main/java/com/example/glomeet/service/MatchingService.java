@@ -3,8 +3,8 @@ package com.example.glomeet.service;
 import com.example.glomeet.dto.MatchingRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.mapper.MatchingMapper;
-import com.example.glomeet.mongo.model.MatchingMessage;
-import com.example.glomeet.repository.MatchingMessageRepository;
+import com.example.glomeet.mongo.model.ChatMessage;
+import com.example.glomeet.repository.ChatMessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class MatchingService {
     private ListOperations<String, Object> listOperations;
     private final ObjectMapper objectMapper;
     private final MongoTemplate mongoTemplate;
-    private final MatchingMessageRepository matchingMessageRepository;
+    private final ChatMessageRepository chatMessageRepository;
 
     public void createChatRoom(int chatRoomId, List<String> emails) {
         matchingMapper.insertMatchingRoom();
@@ -45,7 +45,7 @@ public class MatchingService {
     public List<MatchingRoomInfoDTO> findLastMessageByMatchingRoomId(List<MatchingRoomInfoDTO> list) {
         valueOperations = redisTemplate.opsForValue();
         list.forEach(matchingRoomInfoDTO -> {
-            MatchingMessage message = (MatchingMessage) valueOperations.get(
+            ChatMessage message = (ChatMessage) valueOperations.get(
                     LAST_MESSAGE_PREFIX + matchingRoomInfoDTO.getId());
 
             if (!Objects.isNull(message)) {
@@ -60,9 +60,9 @@ public class MatchingService {
         return matchingMapper.findMatchingRoomInfoByEmail(email);
     }
 
-    public List<MatchingMessage> MatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
+    public List<ChatMessage> MatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
         commitMessagesToDatabase(messageListRequestDTO);
-        return matchingMessageRepository.findMatchingMessagesByMatchingRoomId(
+        return chatMessageRepository.findMatchingMessagesByRoomId(
                 messageListRequestDTO.getMatchingRoomId());
     }
 
@@ -71,8 +71,8 @@ public class MatchingService {
         List<Object> list = listOperations.range(MESSAGE_LIST_PREFIX + messageListRequestDTO.getMatchingRoomId(), 0,
                 -1);
         if (!list.isEmpty()) {
-            List<MatchingMessage> messages = list.stream()
-                    .map(json -> objectMapper.convertValue(json, MatchingMessage.class))
+            List<ChatMessage> messages = list.stream()
+                    .map(json -> objectMapper.convertValue(json, ChatMessage.class))
                     .collect(Collectors.toList());
             mongoTemplate.insertAll(messages);
             redisTemplate.delete(MESSAGE_LIST_PREFIX + messageListRequestDTO.getMatchingRoomId());

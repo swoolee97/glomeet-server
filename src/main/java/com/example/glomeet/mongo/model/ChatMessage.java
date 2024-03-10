@@ -16,8 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document(collection = "matchingMessage")
-public class MatchingMessage {
+@Document(collection = "chatMessage")
+public class ChatMessage {
 
     @Transient
     public static final String SEQUENCE_NAME = "CHAT_MESSAGE_SEQUENCE";
@@ -27,7 +27,7 @@ public class MatchingMessage {
     @Field
     private String message;
     @Field
-    private String matchingRoomId;
+    private String roomId;
     @Field
     private String senderEmail;
     @Field

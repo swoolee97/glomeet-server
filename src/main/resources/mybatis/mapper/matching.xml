@@ -15,11 +15,11 @@
     </insert>
 
     <insert id="insertChatMessages" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO matchingMessage (message, senderEmail, chatRoomId, sendAt)
+        INSERT INTO chatMessage (message, senderEmail, chatRoomId, sendAt)
         VALUES
-        <foreach collection="matchingMessages" item="matchingMessage" separator=",">
-            (#{matchingMessage.message}, #{matchingMessage.senderEmail}, #{matchingMessage.chatRoomId},
-            #{matchingMessage.sendAt})
+        <foreach collection="chatMessages" item="chatMessage" separator=",">
+            (#{chatMessage.message}, #{chatMessage.senderEmail}, #{chatMessage.chatRoomId},
+            #{chatMessage.sendAt})
         </foreach>
     </insert>
 
@@ -50,7 +50,7 @@
 
     <select id="findChatMessages" parameterType="com.example.glomeet.dto.MessageListRequestDTO">
         SELECT *
-        FROM matchingMessage
+        FROM chatMessage
         WHERE chatRoomId = #{chatRoomId}
     </select>
 

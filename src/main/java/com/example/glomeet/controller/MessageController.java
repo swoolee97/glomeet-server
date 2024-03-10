@@ -1,6 +1,6 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.mongo.model.MatchingMessage;
+import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.service.ChattingService;
 import java.time.Instant;
 import java.util.Date;
@@ -21,7 +21,7 @@ public class MessageController {
     private static final String CHAT_MESSAGE_PREFIX = "chat:";
 
     @MessageMapping("/chat/{roomId}")
-    public void sendMessage(@Payload MatchingMessage message, @DestinationVariable String roomId) {
+    public void sendMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
         message.setSendAt(Date.from(Instant.now()));
         template.convertAndSend("/sub/chat/" + roomId, message);
         chattingService.saveMessageToRedis(message);
