@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MessageListRequestDTO {
     @NotNull
-    private final String matchingRoomId;
+    private final String roomId;
     @Nullable
     private final Optional<Integer> lastMessageId;
 }

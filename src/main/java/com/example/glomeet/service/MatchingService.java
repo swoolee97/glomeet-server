@@ -63,19 +63,19 @@ public class MatchingService {
     public List<ChatMessage> MatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
         commitMessagesToDatabase(messageListRequestDTO);
         return chatMessageRepository.findMatchingMessagesByRoomId(
-                messageListRequestDTO.getMatchingRoomId());
+                messageListRequestDTO.getRoomId());
     }
 
     public void commitMessagesToDatabase(MessageListRequestDTO messageListRequestDTO) {
         listOperations = redisTemplate.opsForList();
-        List<Object> list = listOperations.range(MESSAGE_LIST_PREFIX + messageListRequestDTO.getMatchingRoomId(), 0,
+        List<Object> list = listOperations.range(MESSAGE_LIST_PREFIX + messageListRequestDTO.getRoomId(), 0,
                 -1);
         if (!list.isEmpty()) {
             List<ChatMessage> messages = list.stream()
                     .map(json -> objectMapper.convertValue(json, ChatMessage.class))
                     .collect(Collectors.toList());
             mongoTemplate.insertAll(messages);
-            redisTemplate.delete(MESSAGE_LIST_PREFIX + messageListRequestDTO.getMatchingRoomId());
+            redisTemplate.delete(MESSAGE_LIST_PREFIX + messageListRequestDTO.getRoomId());
         }
     }
 
