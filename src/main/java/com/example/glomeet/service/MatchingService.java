@@ -6,9 +6,6 @@ import com.example.glomeet.mapper.MatchingMapper;
 import com.example.glomeet.mongo.model.MatchingMessage;
 import com.example.glomeet.repository.MatchingMessageRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,7 +20,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MatchingService {
     private static final String LAST_MESSAGE_PREFIX = "lastMessage:";
-    private static final String MESSAGE_LIST_PREFIX = "matchingRoom:";
+    private static final String MESSAGE_LIST_PREFIX = "chat:";
     private final MatchingMapper matchingMapper;
     private final RedisTemplate<String, Object> redisTemplate;
     private ValueOperations<String, Object> valueOperations;
@@ -50,7 +47,7 @@ public class MatchingService {
         list.forEach(matchingRoomInfoDTO -> {
             MatchingMessage message = (MatchingMessage) valueOperations.get(
                     LAST_MESSAGE_PREFIX + matchingRoomInfoDTO.getId());
-            
+
             if (!Objects.isNull(message)) {
                 matchingRoomInfoDTO.setMessage(message.getMessage());
                 matchingRoomInfoDTO.setSendAt(message.getSendAt());
@@ -80,24 +77,6 @@ public class MatchingService {
             mongoTemplate.insertAll(messages);
             redisTemplate.delete(MESSAGE_LIST_PREFIX + messageListRequestDTO.getMatchingRoomId());
         }
-    }
-
-    public void saveMessageToRedis(MatchingMessage matchingMessage) {
-        Instant instant = Instant.now().atZone(ZoneId.of("Asia/Seoul")).toInstant();
-        Timestamp timestamp = Timestamp.from(instant);
-        matchingMessage.setSendAt(timestamp);
-        addMessageToRedis(matchingMessage);
-        saveLastMessage(matchingMessage);
-    }
-
-    public void saveLastMessage(MatchingMessage matchingMessage) {
-        valueOperations = redisTemplate.opsForValue();
-        valueOperations.set(LAST_MESSAGE_PREFIX + matchingMessage.getMatchingRoomId(), matchingMessage);
-    }
-
-    public void addMessageToRedis(MatchingMessage matchingMessage) {
-        redisTemplate.opsForList()
-                .rightPush(MESSAGE_LIST_PREFIX + matchingMessage.getMatchingRoomId(), matchingMessage);
     }
 
 }
