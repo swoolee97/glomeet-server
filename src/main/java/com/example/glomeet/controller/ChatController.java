@@ -6,7 +6,12 @@ import com.example.glomeet.entity.ChatMessage;
 import com.example.glomeet.service.ChatService;
 import com.example.glomeet.service.UserDetailsServiceImpl;
 import java.util.List;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -41,4 +46,31 @@ public class ChatController {
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
+    @PostMapping ("/translate")
+    public ResponseEntity<TranslationResponseDTO> translate (@RequestBody TranslationRequestDTO translationRequestDTO) {
+        try {
+            String translatedText = chatService.translateToEnglish(translationRequestDTO.getText());
+            TranslationResponseDTO translationResponseDTO = new TranslationResponseDTO();
+            translationResponseDTO.setTranslatedText(translatedText);
+
+            return ResponseEntity.ok(translationResponseDTO);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TranslationRequestDTO {
+        @NotNull
+        private String text;
+    }
+
+    @Setter
+    @Getter
+    @NoArgsConstructor
+    public static class TranslationResponseDTO {
+        @NotNull
+        private String translatedText;
+    }
 }

@@ -61,4 +61,5 @@
         FROM chatMessage
         WHERE chatRoomId = #{chatRoomId}
     </select>
+
 </mapper>
