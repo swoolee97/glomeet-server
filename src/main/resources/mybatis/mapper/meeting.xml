@@ -57,7 +57,7 @@
                  left join meetingUser as b
                            on a.id = b.meetingId
         where a.status = 'ACTIVE'
-          and b.userEmail = 'bbbb'
+          and b.userEmail = #{email}
     </select>
 
     <select id="findMyMeetingsIdByEmail">
