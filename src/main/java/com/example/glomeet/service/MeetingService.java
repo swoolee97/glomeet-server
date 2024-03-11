@@ -17,6 +17,7 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,11 +29,13 @@ public class MeetingService {
     private static final String LAST_MESSAGE_PREFIX = "lastMessage:";
     private final ChatMessageRepository chatMessageRepository;
 
+    @Transactional
     public void createMeeting(Meeting meeting) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         meeting.setMasterEmail(userDetails.getUsername());
         meeting.setId(UUID.randomUUID().toString());
         meetingMapper.insertMeeting(meeting);
+        meetingMapper.insertMeetingUser(meeting.getId(), userDetails.getUsername());
     }
 
     public boolean joinMeeting(MemberJoinRequestDTO memberJoinRequestDTO) {
