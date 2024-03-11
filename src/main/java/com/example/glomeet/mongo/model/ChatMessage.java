@@ -32,5 +32,11 @@ public class ChatMessage {
     private String senderEmail;
     @Field
     private Date sendAt;
+    @Field
+    private Type type;
+
+    public enum Type {
+        ENTER, LEAVE, SEND;
+    }
 
 }

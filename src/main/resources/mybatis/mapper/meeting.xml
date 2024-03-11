@@ -45,25 +45,19 @@
     </select>
 
     <resultMap id="MeetingChatResultMap" type="com.example.glomeet.dto.MeetingChatInfoDTO">
-        <id property="meetingId" column="meetingId"/>
+        <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="sendAt" column="sendAt"/>
         <result property="lastMessage" column="lastMessage"/>
     </resultMap>
 
     <select id="findMeetingChatById" resultMap="MeetingChatResultMap">
-        SELECT c.title, a.meetingId, a.sendAt, if(a.sendAt >= d.joinAt, a.message, null) as lastMessage
-        FROM meetingMessage AS a
-                 LEFT JOIN meeting as c
-                           ON a.meetingId = c.id
-                 LEFT JOIN meetingUser as d
-                           ON c.id = d.meetingId
-        WHERE (a.meetingId, a.sendAt, a.id) = (SELECT b.meetingId, MAX(b.sendAt) AS maxSendAt, MAX(b.id) AS maxId
-                                               FROM meetingMessage AS b
-                                               WHERE b.meetingId = a.meetingId)
-          AND d.userEmail = #{email}
-          AND c.status = 'ACTIVE'
-        ORDER BY 3 ASC
+        select a.id, a.title, null, null
+        from meeting as a
+                 left join meetingUser as b
+                           on a.id = b.meetingId
+        where a.status = 'ACTIVE'
+          and b.userEmail = 'bbbb'
     </select>
 
     <select id="findMyMeetingsIdByEmail">

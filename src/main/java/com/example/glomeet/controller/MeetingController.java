@@ -14,8 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -46,24 +44,23 @@ public class MeetingController {
         return ResponseEntity.ok().build();
     }
 
+    // 활성화된 미팅 리스트 전체 불러오는 api
     @GetMapping("/all")
     public ResponseEntity<?> getAllMeetingList() {
         List<MeetingInfoDTO> meetingList = meetingService.getAllMeetingList();
         return ResponseEntity.ok().body(meetingList);
     }
 
+    // 내가 속한 미팅방 ID 불러오기
     @PostMapping("/my")
     public ResponseEntity<?> getMyMeetingList() {
         List<String> meetingList = meetingService.getMyMeetingList();
         return ResponseEntity.ok(meetingList);
     }
 
-    @PostMapping("/chat")
+    @PostMapping("/list")
     public List<MeetingChatInfoDTO> getMeetingChatList() {
-        String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal()).getUsername();
-        List<MeetingChatInfoDTO> list = meetingService.getMeetingChatList(email);
-        return list;
+        return meetingService.getMeetingChatList();
     }
 
     @Getter

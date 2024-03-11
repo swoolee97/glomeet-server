@@ -1,6 +1,7 @@
 package com.example.glomeet.controller;
 
 import com.example.glomeet.mongo.model.ChatMessage;
+import com.example.glomeet.mongo.model.ChatMessage.Type;
 import com.example.glomeet.service.ChattingService;
 import java.time.Instant;
 import java.util.Date;
@@ -23,6 +24,15 @@ public class MessageController {
     @MessageMapping("/chat/{roomId}")
     public void sendMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
         message.setSendAt(Date.from(Instant.now()));
+        message.setType(Type.SEND);
+        template.convertAndSend("/sub/chat/" + roomId, message);
+        chattingService.saveMessageToRedis(message);
+    }
+
+    @MessageMapping("/chat/enter/{roomId}")
+    public void sendHelloMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
+        message.setType(Type.ENTER);
+        message.setMessage("@@@님이 입장했어요");
         template.convertAndSend("/sub/chat/" + roomId, message);
         chattingService.saveMessageToRedis(message);
     }
