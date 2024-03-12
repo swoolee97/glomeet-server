@@ -1,9 +1,12 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.mapper.MatchingMapper;
+import com.example.glomeet.mapper.MeetingMapper;
 import com.example.glomeet.mongo.model.ChatMessage;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneId;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -16,6 +19,17 @@ public class ChattingService {
     private static final String MESSAGE_LIST_PREFIX = "chat:";
     private final RedisTemplate<String, Object> redisTemplate;
     private ValueOperations<String, Object> valueOperations;
+    private final UserDetailsServiceImpl userDetailsService;
+    private final MatchingMapper matchingMapper;
+    private final MeetingMapper meetingMapper;
+
+    public List<String> getMyChatList() {
+        String email = userDetailsService.getUserNameByAccessToken();
+        List<String> matchingIdList = matchingMapper.findMatchingRoomByEmail(email);
+        List<String> meetingIdList = meetingMapper.findMyMeetingsIdByEmail(email);
+        matchingIdList.addAll(meetingIdList);
+        return matchingIdList;
+    }
 
     public void saveMessageToRedis(ChatMessage chatMessage) {
         Instant instant = Instant.now().atZone(ZoneId.of("Asia/Seoul")).toInstant();
