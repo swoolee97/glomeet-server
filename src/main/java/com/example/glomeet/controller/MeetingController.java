@@ -9,6 +9,7 @@ import com.example.glomeet.service.MeetingService.ExceededMeetingCapacityExcepti
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -28,8 +29,9 @@ public class MeetingController {
     private final MeetingService meetingService;
 
     @PostMapping("/create")
-    public void createMeeting(@RequestBody @Valid Meeting meeting) {
-        meetingService.createMeeting(meeting);
+    public ResponseEntity<?> createMeeting(@RequestBody @Valid Meeting meeting) {
+        Map<String, String> map = meetingService.createMeeting(meeting);
+        return ResponseEntity.ok(map);
     }
 
     @PostMapping("/join")

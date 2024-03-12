@@ -7,7 +7,9 @@ import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.mapper.MeetingMapper;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.repository.ChatMessageRepository;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -30,12 +32,15 @@ public class MeetingService {
     private final ChatMessageRepository chatMessageRepository;
 
     @Transactional
-    public void createMeeting(Meeting meeting) {
+    public Map<String, String> createMeeting(Meeting meeting) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         meeting.setMasterEmail(userDetails.getUsername());
         meeting.setId(UUID.randomUUID().toString());
         meetingMapper.insertMeeting(meeting);
         meetingMapper.insertMeetingUser(meeting.getId(), userDetails.getUsername());
+        Map<String, String> map = new HashMap<>();
+        map.put("id", meeting.getId());
+        return map;
     }
 
     public boolean joinMeeting(MemberJoinRequestDTO memberJoinRequestDTO) {
