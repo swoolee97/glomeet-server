@@ -10,48 +10,33 @@
     </delete>
 
     <insert id="insertMatchingUser">
-        INSERT INTO chatRoom
-        VALUES (#{chatRoomId}, #{userEmail})
-    </insert>
-
-    <insert id="insertChatMessages" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO chatMessage (message, senderEmail, chatRoomId, sendAt)
-        VALUES
-        <foreach collection="chatMessages" item="chatMessage" separator=",">
-            (#{chatMessage.message}, #{chatMessage.senderEmail}, #{chatMessage.chatRoomId},
-            #{chatMessage.sendAt})
-        </foreach>
+        INSERT INTO matchingRoom
+        VALUES (#{matchingRoomId}, #{userEmail})
     </insert>
 
     <select id="findMatchingRoomByEmail" resultType="java.lang.String">
         SELECT id
-        FROM chatRoom
-                 INNER JOIN chatUser
-                            ON chatRoom.id = chatUser.chatRoomId
-        WHERE chatUser.userEmail = #{email}
-          AND chatRoom.roomStatus = 'ACTIVE'
+        FROM matchingRoom
+                 INNER JOIN matchingUser
+                            ON matchingRoom.id = matchingUser.matchingRoomId
+        WHERE matchingUser.userEmail = #{email}
+          AND matchingRoom.roomStatus = 'ACTIVE'
     </select>
 
-    <select id="findMatchingRoomInfoByEmail" resultMap="chatRoomInfo">
-        select chatRoomId, userEmail
-        from chatUser
+    <select id="findMatchingRoomInfoByEmail" resultMap="matchingRoomInfo">
+        select matchingRoomId, userEmail
+        from matchingUser
         where userEmail != #{email}
-          and chatRoomId in (select chatRoomId from chatUser
+          and matchingRoomId in (select matchingRoomId from matchingUser
             where userEmail = #{email})
     </select>
 
 
-    <resultMap id="chatRoomInfo" type="com.example.glomeet.dto.MatchingRoomInfoDTO">
-        <id column="chatRoomId" property="id"/>
+    <resultMap id="matchingRoomInfo" type="com.example.glomeet.dto.MatchingRoomInfoDTO">
+        <id column="matchingRoomId" property="id"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
         <result column="userEmail" property="partnerEmail"/>
     </resultMap>
-
-    <select id="findChatMessages" parameterType="com.example.glomeet.dto.MessageListRequestDTO">
-        SELECT *
-        FROM chatMessage
-        WHERE chatRoomId = #{chatRoomId}
-    </select>
 
 </mapper>

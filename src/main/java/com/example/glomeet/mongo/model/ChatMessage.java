@@ -36,7 +36,7 @@ public class ChatMessage {
     private Type type;
 
     public enum Type {
-        ENTER, LEAVE, SEND;
+        CREATE, JOIN, LEAVE, SEND;
     }
 
 }

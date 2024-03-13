@@ -23,23 +23,14 @@ public class MessageController {
 
     @MessageMapping("/chat/{roomId}")
     public void sendMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
+        Type type = message.getType();
         message.setSendAt(Date.from(Instant.now()));
-        message.setType(Type.SEND);
+        if (type.equals(Type.SEND)) {
+            chattingService.saveMessageToRedis(message);
+        } else {
+            chattingService.addMessageToRedis(message);
+        }
         template.convertAndSend("/sub/chat/" + roomId, message);
-        chattingService.saveMessageToRedis(message);
-    }
-
-    @MessageMapping("/chat/enter/{roomId}")
-    public void sendHelloMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
-        message.setType(Type.ENTER);
-        message.setMessage("@@@님이 입장했어요");
-        template.convertAndSend("/sub/chat/" + roomId, message);
-        chattingService.saveMessageToRedis(message);
-    }
-
-    @MessageMapping("/meeting/{meetingId}")
-    public void abc() {
-
     }
 
 }

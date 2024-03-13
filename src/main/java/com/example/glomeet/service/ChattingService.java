@@ -3,9 +3,6 @@ package com.example.glomeet.service;
 import com.example.glomeet.mapper.MatchingMapper;
 import com.example.glomeet.mapper.MeetingMapper;
 import com.example.glomeet.mongo.model.ChatMessage;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -32,9 +29,6 @@ public class ChattingService {
     }
 
     public void saveMessageToRedis(ChatMessage chatMessage) {
-        Instant instant = Instant.now().atZone(ZoneId.of("Asia/Seoul")).toInstant();
-        Timestamp timestamp = Timestamp.from(instant);
-        chatMessage.setSendAt(timestamp);
         addMessageToRedis(chatMessage);
         saveLastMessage(chatMessage);
     }
