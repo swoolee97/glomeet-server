@@ -11,29 +11,29 @@
 
     <insert id="insertMatchingUser">
         INSERT INTO matchingRoom
-        VALUES (#{matchingRoomId}, #{userEmail})
+        VALUES (#{matchingid}, #{userEmail})
     </insert>
 
     <select id="findMatchingRoomByEmail" resultType="java.lang.String">
         SELECT id
         FROM matchingRoom
                  INNER JOIN matchingUser
-                            ON matchingRoom.id = matchingUser.matchingRoomId
+                            ON matchingRoom.id = matchingUser.matchingid
         WHERE matchingUser.userEmail = #{email}
           AND matchingRoom.roomStatus = 'ACTIVE'
     </select>
 
     <select id="findMatchingRoomInfoByEmail" resultMap="matchingRoomInfo">
-        select matchingRoomId, userEmail
+        select matchingid, userEmail
         from matchingUser
         where userEmail != #{email}
-          and matchingRoomId in (select matchingRoomId from matchingUser
+          and matchingid in (select matchingid from matchingUser
             where userEmail = #{email})
     </select>
 
 
     <resultMap id="matchingRoomInfo" type="com.example.glomeet.dto.MatchingRoomInfoDTO">
-        <id column="matchingRoomId" property="id"/>
+        <id column="matchingid" property="id"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
         <result column="userEmail" property="partnerEmail"/>
