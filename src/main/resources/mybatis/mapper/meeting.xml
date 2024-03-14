@@ -26,17 +26,29 @@
     </insert>
 
     <resultMap id="meetingInfoResultMap" type="com.example.glomeet.dto.MeetingInfoDTO">
-        <id property="id" column="id"/>
-        <result property="capacity" column="capacity"/>
-        <result property="category" column="category"/>
-        <result property="location" column="location"/>
-        <result property="meetingDate" column="meetingDate"/>
-        <result property="url" column="url"/>
+        <id property="meeting.id" column="id"/>
+        <result property="meeting.title" column="title"/>
+        <result property="meeting.comment" column="comment"/>
+        <result property="meeting.capacity" column="capacity"/>
+        <result property="meeting.category" column="category"/>
+        <result property="meeting.location" column="location"/>
+        <result property="meeting.meetingDate" column="meetingDate"/>
+        <result property="meeting.masterEmail" column="masterEmail"/>
+        <result property="meeting.url" column="url"/>
         <result property="participants" column="participants"/>
     </resultMap>
 
     <select id="findAllMeetings" resultMap="meetingInfoResultMap">
-        SELECT a.id, a.capacity, a.category, a.location, a.meetingDate, a.url, count(*) participants
+        SELECT a.id,
+               a.title,
+               a.comment,
+               a.capacity,
+               a.category,
+               a.location,
+               a.meetingDate,
+               a.url,
+               a.masterEmail,
+               count(*) participants
         FROM meeting AS a
                  LEFT JOIN meetingUser AS b
                            ON a.id = b.meetingId
@@ -45,14 +57,31 @@
     </select>
 
     <resultMap id="MeetingChatResultMap" type="com.example.glomeet.dto.MeetingChatInfoDTO">
-        <id property="id" column="id"/>
-        <result property="title" column="title"/>
+        <id property="meeting.id" column="id"/>
+        <result property="meeting.title" column="title"/>
+        <result property="meeting.comment" column="comment"/>
+        <result property="meeting.capacity" column="capacity"/>
+        <result property="meeting.category" column="category"/>
+        <result property="meeting.location" column="location"/>
+        <result property="meeting.meetingDate" column="meetingDate"/>
+        <result property="meeting.masterEmail" column="masterEmail"/>
+        <result property="meeting.url" column="url"/>
         <result property="sendAt" column="sendAt"/>
         <result property="lastMessage" column="lastMessage"/>
     </resultMap>
 
     <select id="findMeetingChatById" resultMap="MeetingChatResultMap">
-        select a.id, a.title, null, null
+        SELECT a.id,
+               a.title,
+               a.comment,
+               a.capacity,
+               a.category,
+               a.location,
+               a.meetingDate,
+               a.url,
+               a.masterEmail,
+               null,
+               null
         from meeting as a
                  left join meetingUser as b
                            on a.id = b.meetingId

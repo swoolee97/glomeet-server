@@ -1,17 +1,12 @@
 package com.example.glomeet.dto;
 
-import java.sql.Timestamp;
+import com.example.glomeet.entity.Meeting;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class MeetingInfoDTO {
-    private String id;
-    private int capacity;
-    private String category;
-    private String location;
-    private Timestamp meetingDate;
-    private String url;
+    private Meeting meeting;
     private int participants;
 }

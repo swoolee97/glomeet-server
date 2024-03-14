@@ -1,5 +1,6 @@
 package com.example.glomeet.dto;
 
+import com.example.glomeet.entity.Meeting;
 import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
@@ -9,10 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MeetingChatInfoDTO {
-    @NotNull
-    private String id;
-    @NotNull
-    private String title;
+    private Meeting meeting;
     @NotNull
     private Date sendAt;
     @Nullable

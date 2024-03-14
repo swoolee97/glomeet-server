@@ -73,12 +73,12 @@ public class MeetingService {
         List<MeetingChatInfoDTO> list = meetingMapper.findMeetingChatById(email);
         valueOperations = redisTemplate.opsForValue();
         list.forEach(c -> {
-            ChatMessage chatMessage = valueOperations.get(LAST_MESSAGE_PREFIX + c.getId());
+            ChatMessage chatMessage = valueOperations.get(LAST_MESSAGE_PREFIX + c.getMeeting().getId());
             if (!Objects.isNull(chatMessage)) {
                 c.setLastMessage(chatMessage.getMessage());
                 c.setSendAt(chatMessage.getSendAt());
             } else {
-                ChatMessage lastMessage = chatMessageRepository.findTopByRoomId(c.getId());
+                ChatMessage lastMessage = chatMessageRepository.findTopByRoomId(c.getMeeting().getId());
                 if (!Objects.isNull(lastMessage)) {
                     c.setLastMessage(lastMessage.getMessage());
                     c.setSendAt(lastMessage.getSendAt());

@@ -2,12 +2,14 @@ package com.example.glomeet.entity;
 
 import jakarta.validation.constraints.NotNull;
 import java.sql.Timestamp;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @Builder
 public class Meeting {
     private String id;
@@ -25,4 +27,8 @@ public class Meeting {
     private String url;
     private String status;
     private String masterEmail;
+
+    public Meeting() {
+
+    }
 }
