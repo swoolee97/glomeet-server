@@ -1,6 +1,6 @@
 package com.example.glomeet.mapper;
 
-import com.example.glomeet.dto.MatchingRoomInfoDTO;
+import com.example.glomeet.dto.ChatInfoDTO;
 import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -14,6 +14,6 @@ public interface MatchingMapper {
 
     List<String> findMatchingRoomByEmail(String email);
 
-    List<MatchingRoomInfoDTO> findMatchingRoomInfoByEmail(String email);
+    List<ChatInfoDTO> findMatchingRoomInfoByEmail(String email);
 
 }

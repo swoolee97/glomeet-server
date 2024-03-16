@@ -56,7 +56,7 @@
         GROUP BY a.id;
     </select>
 
-    <resultMap id="MeetingChatResultMap" type="com.example.glomeet.dto.MeetingChatInfoDTO">
+    <resultMap id="MeetingChatResultMap" type="com.example.glomeet.dto.ChatInfoDTO">
         <id property="id" column="id"/>
         <result property="title" column="title"/>
         <result property="sendAt" column="sendAt"/>

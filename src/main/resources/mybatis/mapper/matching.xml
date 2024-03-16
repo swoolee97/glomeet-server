@@ -32,11 +32,11 @@
     </select>
 
 
-    <resultMap id="matchingRoomInfo" type="com.example.glomeet.dto.MatchingRoomInfoDTO">
+    <resultMap id="matchingRoomInfo" type="com.example.glomeet.dto.ChatInfoDTO">
         <id column="matchingid" property="id"/>
         <result column="message" property="message"/>
         <result column="sendAt" property="sendAt"/>
-        <result column="userEmail" property="partnerEmail"/>
+        <result column="userEmail" property="title"/>
     </resultMap>
 
 </mapper>

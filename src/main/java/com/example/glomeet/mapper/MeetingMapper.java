@@ -1,6 +1,6 @@
 package com.example.glomeet.mapper;
 
-import com.example.glomeet.dto.MeetingChatInfoDTO;
+import com.example.glomeet.dto.ChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import java.util.List;
@@ -18,7 +18,7 @@ public interface MeetingMapper {
 
     List<MeetingInfoDTO> findAllMeetings();
 
-    List<MeetingChatInfoDTO> findMeetingChatById(String email);
+    List<ChatInfoDTO> findMeetingChatById(String email);
 
     List<String> findMyMeetingsIdByEmail(String email);
 }

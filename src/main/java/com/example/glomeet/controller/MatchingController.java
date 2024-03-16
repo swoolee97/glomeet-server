@@ -1,10 +1,7 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.dto.MatchingRoomInfoDTO;
-import com.example.glomeet.dto.MessageListRequestDTO;
-import com.example.glomeet.mongo.model.ChatMessage;
-import com.example.glomeet.service.MatchingService;
-import com.example.glomeet.service.UserDetailsServiceImpl;
+import com.example.glomeet.dto.ChatInfoDTO;
+import com.example.glomeet.service.ChattingService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,8 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/matching")
 public class MatchingController {
 
-    private final MatchingService matchingService;
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final ChattingService chattingService;
 
     @PostMapping("/generate")
     public void generateChatRoom() {
@@ -28,18 +24,12 @@ public class MatchingController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<List<MatchingRoomInfoDTO>> extractMatchingList() {
-        String email = userDetailsServiceImpl.getUserNameByAccessToken();
-        List<MatchingRoomInfoDTO> matchingRoomInfos = matchingService.findMatchingRoomInfoByEmail(email);
-        List<MatchingRoomInfoDTO> lastMessages = matchingService.findLastMessageByMatchingRoomId(matchingRoomInfos);
-        return new ResponseEntity<>(lastMessages, HttpStatus.OK);
+    public ResponseEntity<List<ChatInfoDTO>> extractMatchingList(
+            @RequestBody MatchingListRequestDTO matchingListRequest) {
+        List<ChatInfoDTO> matchingRoomInfos = chattingService.findMatchingRoomInfoByEmail(
+                matchingListRequest.getLastLeftMap());
+        return new ResponseEntity<>(matchingRoomInfos, HttpStatus.OK);
     }
 
-    @PostMapping("/message-list")
-    public ResponseEntity<List<ChatMessage>> getMessageListByChatRoomId(
-            @RequestBody MessageListRequestDTO messageListRequestDTO) {
-        List<ChatMessage> list = matchingService.MatchingMessageByChatRoomId(messageListRequestDTO);
-        return new ResponseEntity<>(list, HttpStatus.OK);
-    }
 
 }

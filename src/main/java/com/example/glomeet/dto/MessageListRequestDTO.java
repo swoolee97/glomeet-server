@@ -13,4 +13,5 @@ public class MessageListRequestDTO {
     private final String roomId;
     @Nullable
     private final Optional<Integer> lastMessageId;
+    private String lastLeftAt;
 }

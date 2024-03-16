@@ -1,7 +1,8 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.controller.MatchingListRequestDTO;
 import com.example.glomeet.controller.MeetingController.MemberJoinRequestDTO;
-import com.example.glomeet.dto.MeetingChatInfoDTO;
+import com.example.glomeet.dto.ChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.mapper.MeetingMapper;
@@ -10,7 +11,6 @@ import com.example.glomeet.repository.ChatMessageRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,6 +30,7 @@ public class MeetingService {
     private ValueOperations<String, ChatMessage> valueOperations;
     private static final String LAST_MESSAGE_PREFIX = "lastMessage:";
     private final ChatMessageRepository chatMessageRepository;
+    private final ChattingService chattingService;
 
     @Transactional
     public Map<String, String> createMeeting(Meeting meeting) {
@@ -67,24 +68,13 @@ public class MeetingService {
         return meetingMapper.findMyMeetingsIdByEmail(userDetails.getUsername());
     }
 
-    public List<MeetingChatInfoDTO> getMeetingChatList() {
+    public List<ChatInfoDTO> getMeetingChatList(MatchingListRequestDTO matchingListRequest) {
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal()).getUsername();
-        List<MeetingChatInfoDTO> list = meetingMapper.findMeetingChatById(email);
+        List<ChatInfoDTO> list = meetingMapper.findMeetingChatById(email);
         valueOperations = redisTemplate.opsForValue();
-        list.forEach(c -> {
-            ChatMessage chatMessage = valueOperations.get(LAST_MESSAGE_PREFIX + c.getId());
-            if (!Objects.isNull(chatMessage)) {
-                c.setLastMessage(chatMessage.getMessage());
-                c.setSendAt(chatMessage.getSendAt());
-            } else {
-                ChatMessage lastMessage = chatMessageRepository.findTopByRoomId(c.getId());
-                if (!Objects.isNull(lastMessage)) {
-                    c.setLastMessage(lastMessage.getMessage());
-                    c.setSendAt(lastMessage.getSendAt());
-                }
-            }
-        });
+        list = chattingService.findLastMessageByRoomId(list);
+        chattingService.addUnReadCount(list, matchingListRequest.getLastLeftMap());
         return list;
     }
 

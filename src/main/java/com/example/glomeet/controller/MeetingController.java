@@ -1,6 +1,6 @@
 package com.example.glomeet.controller;
 
-import com.example.glomeet.dto.MeetingChatInfoDTO;
+import com.example.glomeet.dto.ChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
 import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.response.Response;
@@ -61,8 +61,8 @@ public class MeetingController {
     }
 
     @PostMapping("/list")
-    public List<MeetingChatInfoDTO> getMeetingChatList() {
-        return meetingService.getMeetingChatList();
+    public List<ChatInfoDTO> getMeetingChatList(@RequestBody MatchingListRequestDTO matchingListRequest) {
+        return meetingService.getMeetingChatList(matchingListRequest);
     }
 
     @Getter
