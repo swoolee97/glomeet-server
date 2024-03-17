@@ -47,22 +47,18 @@ public class ChatController {
     }
 
     @PostMapping ("/translate")
-    public ResponseEntity<TranslationResponseDTO> translate (@RequestBody TranslationRequestDTO translationRequestDTO) {
-        try {
-            String translatedText = chatService.translateToEnglish(translationRequestDTO.getText());
+    public ResponseEntity<?> translate(@RequestBody TranslationRequestDTO translationRequestDTO) {
+
+        String translatedText = chatService.translateToEnglish(translationRequestDTO);
             TranslationResponseDTO translationResponseDTO = new TranslationResponseDTO();
             translationResponseDTO.setTranslatedText(translatedText);
 
             return ResponseEntity.ok(translationResponseDTO);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
     }
     @Setter
     @Getter
     @NoArgsConstructor
     public static class TranslationRequestDTO {
-        @NotNull
         private String text;
     }
 
@@ -70,7 +66,6 @@ public class ChatController {
     @Getter
     @NoArgsConstructor
     public static class TranslationResponseDTO {
-        @NotNull
         private String translatedText;
     }
 }

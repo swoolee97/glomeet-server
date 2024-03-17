@@ -1,5 +1,8 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.controller.ChatController;
+import com.example.glomeet.controller.ChatController.TranslationResponseDTO;
+import com.example.glomeet.controller.ChatController.TranslationRequestDTO;
 import com.example.glomeet.dto.ChatRoomInfoDTO;
 import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.entity.ChatMessage;
@@ -41,12 +44,16 @@ public class ChatService {
         return chatMapper.findChatMessages(messageListRequestDTO);
     }
 
-    public String translateToEnglish(String text) {
+    public String translateToEnglish(TranslationRequestDTO translationRequestDTO) {
+        String authKey = "989d8dcc-8b6a-49d0-9ee7-ea8dff6d4933:fx";
+        translator = new Translator(authKey);
         try {
-            TextResult result = translator.translateText(text, null, "EN");
-            return result.getText();
+            TextResult result = translator.translateText(translationRequestDTO.getText(), null, "EN");
+            translationRequestDTO.setText(result.getText());
+            return translationRequestDTO.getText();
         } catch (Exception e) {
-            throw new RuntimeException("Translation error", e);
+            e.printStackTrace();
+            return "Translation failed: " + e.getMessage();
         }
     }
 }
