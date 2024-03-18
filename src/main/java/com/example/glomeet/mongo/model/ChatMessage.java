@@ -34,9 +34,22 @@ public class ChatMessage {
     private Date sendAt;
     @Field
     private Type type;
+    @Field
+    private int readCount;
+
+    /*
+    CREATE : 방 생성
+    JOIN : 방 참가
+    LEAVE : 빙 퇴장
+    SEND : 메세지 보내기
+    ENTER : 방 입장
+    EXIT : 방 나가기
+    JOIN, LEAVE는 미팅에 처음 참여하거나 아예 나갈 때 쓰는 type.
+    ENTER, EXIT은 채팅하려고 들어가거나, 채팅 끝내고 나갈 때 쓰는 type
+     */
 
     public enum Type {
-        CREATE, JOIN, LEAVE, SEND;
+        CREATE, JOIN, LEAVE, SEND, ENTER, EXIT;
     }
 
 }
