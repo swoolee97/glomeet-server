@@ -65,10 +65,18 @@ public class ChattingService {
         return chatMessageRepository.countMessagesAfterLastLeftAt(id, lastLeftAt);
     }
 
-    private int countUnReadMessageInRedis(String id) {
+    private int countUnReadMessageInRedis(String id, String lastReadTime) {
+        int count = 0;
         listOperations = redisTemplate.opsForList();
-        List<Object> list = listOperations.range("chat:" + id, 0, -1);
-        return list.size();
+        Date date = DateUtil.parseDate(lastReadTime);
+        List<ChatMessage> list = listOperations.range("chat:" + id, 0, -1).stream().map(o -> (ChatMessage) o).collect(
+                Collectors.toList());
+        for (ChatMessage message : list) {
+            if (date.toInstant().isBefore(message.getSendAt().toInstant())) {
+                count++;
+            }
+        }
+        return count;
     }
 
     public List<ChatInfoDTO> findMatchingRoomInfoByEmail(Map<String, String> lastLeftMap) {
@@ -90,7 +98,7 @@ public class ChattingService {
             }
             Date lastLeft = DateUtil.parseDate(lastLeftMap.get(id));
             int unReadCountInDatabase = countUnReadMessageInDatabase(id, lastLeft);
-            int unReadCountInRedis = countUnReadMessageInRedis(id);
+            int unReadCountInRedis = countUnReadMessageInRedis(id, lastLeftMap.get(id));
             info.setUnRead(unReadCountInDatabase + unReadCountInRedis);
         }
         return infoList;
