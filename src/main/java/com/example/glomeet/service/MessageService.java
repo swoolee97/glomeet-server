@@ -18,16 +18,17 @@ public class MessageService {
     public ChatMessage updateAndGetActiveUserCount(ChatMessage message) {
         Type type = message.getType();
         String key = COUNT_ACTIVE_USER_PREFIX + message.getRoomId();
+        valueOperations = redisTemplate.opsForValue();
         if (type.equals(Type.ENTER)) {
-            valueOperations = redisTemplate.opsForValue();
             valueOperations.setIfAbsent(key, 0);
             valueOperations.increment(key);
         } else if (type.equals(Type.EXIT)) {
-            valueOperations = redisTemplate.opsForValue();
             valueOperations.setIfAbsent(key, 1);
             valueOperations.decrement(key);
         }
-        message.setReadCount(valueOperations.get(key));
+
+        // 임시용
+        message.setReadCount(0);
         return message;
     }
 
