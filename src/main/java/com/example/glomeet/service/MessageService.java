@@ -26,9 +26,7 @@ public class MessageService {
             valueOperations.setIfAbsent(key, 1);
             valueOperations.decrement(key);
         }
-
-        // 임시용
-        message.setReadCount(0);
+        message.setReadCount(valueOperations.get(key));
         return message;
     }
 
