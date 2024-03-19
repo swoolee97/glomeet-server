@@ -1,7 +1,6 @@
 package com.example.glomeet.dto;
 
 import jakarta.validation.constraints.NotNull;
-import java.util.Optional;
 import javax.annotation.Nullable;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +11,5 @@ public class MessageListRequestDTO {
     @NotNull
     private final String roomId;
     @Nullable
-    private final Optional<Integer> lastMessageId;
-    private String lastLeftAt;
+    private final String lastReadAt;
 }

@@ -1,7 +1,11 @@
 package com.example.glomeet.service;
 
+import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.mongo.model.ChatMessage.Type;
+import com.example.glomeet.repository.ChatMessageRepositoryCustomImpl;
+import com.example.glomeet.util.DateUtil;
+import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -12,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class MessageService {
     private final RedisTemplate<String, Integer> redisTemplate;
     private ValueOperations<String, Integer> valueOperations;
+    private final ChatMessageRepositoryCustomImpl chatMessageRepositoryCustom;
 
     private static final String COUNT_ACTIVE_USER_PREFIX = "activeUsers:";
 
@@ -28,6 +33,12 @@ public class MessageService {
         }
         message.setReadCount(valueOperations.get(key));
         return message;
+    }
+
+    public void updateUnReadUserCount(MessageListRequestDTO messageListRequestDTO) {
+        String id = messageListRequestDTO.getRoomId();
+        Date lastReadAt = DateUtil.parseDate(messageListRequestDTO.getLastReadAt());
+        chatMessageRepositoryCustom.updateUnreadCountAfterDate(id, lastReadAt);
     }
 
 }

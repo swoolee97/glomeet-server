@@ -104,8 +104,7 @@ public class ChattingService {
         return infoList;
     }
 
-    public List<ChatMessage> MatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
-        commitMessagesToDatabase(messageListRequestDTO);
+    public List<ChatMessage> findMatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
         return chatMessageRepository.findMatchingMessagesByRoomId(
                 messageListRequestDTO.getRoomId());
     }

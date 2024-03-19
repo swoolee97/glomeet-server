@@ -3,6 +3,7 @@ package com.example.glomeet.controller;
 import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.service.ChattingService;
+import com.example.glomeet.service.MessageService;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ChattingController {
 
     private final ChattingService chattingService;
+    private final MessageService messageService;
 
     @PostMapping("/my")
     public ResponseEntity<?> getMyChatList() {
@@ -32,7 +34,9 @@ public class ChattingController {
     @PostMapping("/message-list")
     public ResponseEntity<?> getMessageListByChatRoomId(
             @RequestBody MessageListRequestDTO messageListRequestDTO) {
-        List<ChatMessage> list = chattingService.MatchingMessageByChatRoomId(messageListRequestDTO);
+        chattingService.commitMessagesToDatabase(messageListRequestDTO);
+        messageService.updateUnReadUserCount(messageListRequestDTO);
+        List<ChatMessage> list = chattingService.findMatchingMessageByChatRoomId(messageListRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
