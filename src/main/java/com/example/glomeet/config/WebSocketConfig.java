@@ -31,6 +31,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     //웹소켓 주소 설정하는 메서드
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
+        registry.addEndpoint("/ws/new-message")
+                .setAllowedOriginPatterns("*");
         registry.addEndpoint("/ws/chat")
                 .setAllowedOriginPatterns("*");
     }

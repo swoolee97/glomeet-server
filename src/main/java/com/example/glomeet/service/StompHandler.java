@@ -3,6 +3,8 @@ package com.example.glomeet.service;
 import com.example.glomeet.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
@@ -16,6 +18,8 @@ import org.springframework.stereotype.Component;
 public class StompHandler implements ChannelInterceptor {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate<String, String> redisTemplate;
+    private SetOperations<String, String> setOperations;
 
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
@@ -30,6 +34,9 @@ public class StompHandler implements ChannelInterceptor {
                 // 에러 던지기
                 log.info("유효하지 않은 토큰");
             }
+            String email = jwtTokenProvider.getAuthentication(accessToken).getName();
+            setOperations = redisTemplate.opsForSet();
+            setOperations.add("activeUsers", email);
         }
         return message;
     }

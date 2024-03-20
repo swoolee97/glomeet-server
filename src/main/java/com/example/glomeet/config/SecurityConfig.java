@@ -43,7 +43,7 @@ public class SecurityConfig {
                             auth.requestMatchers(HttpMethod.POST, "/mail/auth").permitAll();
                             auth.requestMatchers(HttpMethod.POST, "/token/checkToken").authenticated();
                             auth.requestMatchers(HttpMethod.POST, "/token/re-issue").permitAll();
-                            auth.requestMatchers("/ws/chat").permitAll(); // 웹소켓 연결하는건 WebSocketConfig에서 잡을거임
+                            auth.requestMatchers("/ws/*").permitAll(); // 웹소켓 연결하는건 WebSocketConfig에서 잡을거임
                             auth.requestMatchers("/chat/message-list").permitAll();
                             auth.requestMatchers(HttpMethod.GET, "/meeting/list").permitAll();
                             auth.anyRequest().authenticated();

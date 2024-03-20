@@ -8,14 +8,14 @@ import com.example.glomeet.util.DateUtil;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.data.redis.core.SetOperations;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class MessageService {
-    private final RedisTemplate<String, Integer> redisTemplate;
-    private ValueOperations<String, Integer> valueOperations;
+    private final RedisTemplate<String, String> redisTemplate;
+    private SetOperations<String, String> setOperations;
     private final ChatMessageRepositoryCustomImpl chatMessageRepositoryCustom;
 
     private static final String COUNT_ACTIVE_USER_PREFIX = "activeUsers:";
@@ -23,15 +23,13 @@ public class MessageService {
     public ChatMessage updateAndGetActiveUserCount(ChatMessage message) {
         Type type = message.getType();
         String key = COUNT_ACTIVE_USER_PREFIX + message.getRoomId();
-        valueOperations = redisTemplate.opsForValue();
+        setOperations = redisTemplate.opsForSet();
         if (type.equals(Type.ENTER)) {
-            valueOperations.setIfAbsent(key, 0);
-            valueOperations.increment(key);
+            setOperations.add(key, message.getSenderEmail());
         } else if (type.equals(Type.EXIT)) {
-            valueOperations.setIfAbsent(key, 1);
-            valueOperations.decrement(key);
+            setOperations.remove(key, message.getSenderEmail());
         }
-        message.setReadCount(valueOperations.get(key));
+        message.setReadCount(setOperations.size(key).intValue());
         return message;
     }
 

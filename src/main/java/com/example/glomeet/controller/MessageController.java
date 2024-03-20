@@ -31,7 +31,7 @@ public class MessageController {
         } else if (type.equals(Type.SEND)) {
             message = messageService.updateAndGetActiveUserCount(message);
             chattingService.saveMessageToRedis(message);
-        } else if (type.equals(Type.EXIT) || type.equals(Type.ENTER)) {
+        } else if (type.equals(Type.ENTER) || type.equals(Type.EXIT)) {
             message = messageService.updateAndGetActiveUserCount(message);
         }
         template.convertAndSend("/sub/chat/" + roomId, message);
