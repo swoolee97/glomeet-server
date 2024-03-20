@@ -21,4 +21,6 @@ public interface MeetingMapper {
     List<ChatInfoDTO> findMeetingChatById(String email);
 
     List<String> findMyMeetingsIdByEmail(String email);
+
+    List<String> findMeetingUsersById(String roomId);
 }

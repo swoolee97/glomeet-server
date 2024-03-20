@@ -16,4 +16,5 @@ public interface MatchingMapper {
 
     List<ChatInfoDTO> findMatchingRoomInfoByEmail(String email);
 
+    List<String> findUserEmailsByRoomId(String roomId);
 }

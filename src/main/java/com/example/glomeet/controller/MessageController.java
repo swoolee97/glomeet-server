@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 @Slf4j
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Controller;
 @RequiredArgsConstructor
 public class MessageController {
     private final MessageService messageService;
-    private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
     private final ChattingService chattingService;
 
     @MessageMapping("/chat/{roomId}")
@@ -31,10 +29,10 @@ public class MessageController {
         } else if (type.equals(Type.SEND)) {
             message = messageService.updateAndGetActiveUserCount(message);
             chattingService.saveMessageToRedis(message);
+            messageService.sendMessage(roomId, message);
         } else if (type.equals(Type.ENTER) || type.equals(Type.EXIT)) {
             message = messageService.updateAndGetActiveUserCount(message);
         }
-        template.convertAndSend("/sub/chat/" + roomId, message);
     }
 
 }

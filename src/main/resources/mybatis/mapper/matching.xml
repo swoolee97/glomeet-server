@@ -39,4 +39,10 @@
         <result column="userEmail" property="title"/>
     </resultMap>
 
+    <select id="findUserEmailsByRoomId" resultType="java.lang.String">
+        select userEmail
+        from matchingUser
+        where matchingId = #{roomId}
+    </select>
+
 </mapper>

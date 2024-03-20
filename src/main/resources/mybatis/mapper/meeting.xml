@@ -84,4 +84,10 @@
           AND b.status = 'ACTIVE'
     </select>
 
+    <select id="findMeetingUsersById" resultType="java.lang.String">
+        select userEmail
+        from meetingUser
+        where meetingId = #{roomId}
+    </select>
+
 </mapper>
