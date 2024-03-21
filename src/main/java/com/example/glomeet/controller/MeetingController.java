@@ -61,8 +61,8 @@ public class MeetingController {
     }
 
     @PostMapping("/list")
-    public List<ChatInfoDTO> getMeetingChatList(@RequestBody MatchingListRequestDTO matchingListRequest) {
-        return meetingService.getMeetingChatList(matchingListRequest);
+    public List<ChatInfoDTO> getMeetingChatList() {
+        return meetingService.getMeetingChatList();
     }
 
     @Getter

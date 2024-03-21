@@ -40,7 +40,6 @@ public class ChattingController {
         Date lastReadAt = lastReadTimeRepository.findLastReadTimeByRoomIdAndEmail(messageListRequestDTO);
         messageListRequestDTO.setLastReadAt(lastReadAt);
         chattingService.commitMessagesToDatabase(messageListRequestDTO);
-        System.out.println(messageListRequestDTO.getLastReadAt());
         messageService.updateUnReadUserCount(messageListRequestDTO);
         List<ChatMessage> list = chattingService.findMatchingMessageByChatRoomId(messageListRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);

@@ -6,7 +6,7 @@ import com.example.glomeet.mapper.MatchingMapper;
 import com.example.glomeet.mapper.MeetingMapper;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.repository.ChatMessageRepository;
-import com.example.glomeet.util.DateUtil;
+import com.example.glomeet.repository.ChatMessageRepositoryCustomImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +32,7 @@ public class ChattingService {
     private final MatchingMapper matchingMapper;
     private final MeetingMapper meetingMapper;
     private final ChatMessageRepository chatMessageRepository;
+    private final ChatMessageRepositoryCustomImpl chatMessageRepositoryCustom;
     private final ObjectMapper objectMapper;
     private final MongoTemplate mongoTemplate;
 
@@ -65,40 +66,38 @@ public class ChattingService {
         return chatMessageRepository.countMessagesAfterLastLeftAt(id, lastLeftAt);
     }
 
-    private int countUnReadMessageInRedis(String id, String lastReadTime) {
+    private int countUnReadMessageInRedis(String id, Date lastReadTime) {
         int count = 0;
         listOperations = redisTemplate.opsForList();
-        Date date = DateUtil.parseDate(lastReadTime);
         List<ChatMessage> list = listOperations.range("chat:" + id, 0, -1).stream().map(o -> (ChatMessage) o).collect(
                 Collectors.toList());
         for (ChatMessage message : list) {
-            if (date.toInstant().isBefore(message.getSendAt().toInstant())) {
+            if (lastReadTime.toInstant().isBefore(message.getSendAt().toInstant())) {
                 count++;
             }
         }
         return count;
     }
 
-    public List<ChatInfoDTO> findMatchingRoomInfoByEmail(Map<String, String> lastLeftMap) {
+    public List<ChatInfoDTO> findMatchingRoomInfoByEmail() {
         String email = userDetailsService.getUserNameByAccessToken();
         List<ChatInfoDTO> matchingRoomInfos = matchingMapper.findMatchingRoomInfoByEmail(email);
-        matchingRoomInfos = addUnReadCount(matchingRoomInfos,
-                lastLeftMap);
-        matchingRoomInfos = (List<ChatInfoDTO>) findLastMessageByRoomId(
-                matchingRoomInfos);
+        Map<String, Date> lastLeftMap = chatMessageRepositoryCustom.getLastReadMap(email, matchingRoomInfos);
+        matchingRoomInfos = addUnReadCount(matchingRoomInfos, lastLeftMap);
+        matchingRoomInfos = findLastMessageByRoomId(matchingRoomInfos);
         return matchingRoomInfos;
     }
 
     public List<ChatInfoDTO> addUnReadCount(List<ChatInfoDTO> infoList,
-                                            Map<String, String> lastLeftMap) {
+                                            Map<String, Date> lastLeftMap) {
         for (ChatInfoDTO info : infoList) {
             String id = info.getId();
             if (!lastLeftMap.containsKey(id)) {
                 continue;
             }
-            Date lastLeft = DateUtil.parseDate(lastLeftMap.get(id));
+            Date lastLeft = lastLeftMap.get(id);
             int unReadCountInDatabase = countUnReadMessageInDatabase(id, lastLeft);
-            int unReadCountInRedis = countUnReadMessageInRedis(id, lastLeftMap.get(id));
+            int unReadCountInRedis = countUnReadMessageInRedis(id, lastLeft);
             info.setUnRead(unReadCountInDatabase + unReadCountInRedis);
         }
         return infoList;

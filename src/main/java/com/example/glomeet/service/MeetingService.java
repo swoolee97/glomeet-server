@@ -1,6 +1,5 @@
 package com.example.glomeet.service;
 
-import com.example.glomeet.controller.MatchingListRequestDTO;
 import com.example.glomeet.controller.MeetingController.MemberJoinRequestDTO;
 import com.example.glomeet.dto.ChatInfoDTO;
 import com.example.glomeet.dto.MeetingInfoDTO;
@@ -8,6 +7,8 @@ import com.example.glomeet.entity.Meeting;
 import com.example.glomeet.mapper.MeetingMapper;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.repository.ChatMessageRepository;
+import com.example.glomeet.repository.ChatMessageRepositoryCustomImpl;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class MeetingService {
     private static final String LAST_MESSAGE_PREFIX = "lastMessage:";
     private final ChatMessageRepository chatMessageRepository;
     private final ChattingService chattingService;
+    private final ChatMessageRepositoryCustomImpl chatMessageRepositoryCustom;
 
     @Transactional
     public Map<String, String> createMeeting(Meeting meeting) {
@@ -68,13 +70,14 @@ public class MeetingService {
         return meetingMapper.findMyMeetingsIdByEmail(userDetails.getUsername());
     }
 
-    public List<ChatInfoDTO> getMeetingChatList(MatchingListRequestDTO matchingListRequest) {
+    public List<ChatInfoDTO> getMeetingChatList() {
         String email = ((UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal()).getUsername();
         List<ChatInfoDTO> list = meetingMapper.findMeetingChatById(email);
         valueOperations = redisTemplate.opsForValue();
         list = chattingService.findLastMessageByRoomId(list);
-        chattingService.addUnReadCount(list, matchingListRequest.getLastLeftMap());
+        Map<String, Date> lastReadMap = chatMessageRepositoryCustom.getLastReadMap(email, list);
+        chattingService.addUnReadCount(list, lastReadMap);
         return list;
     }
 

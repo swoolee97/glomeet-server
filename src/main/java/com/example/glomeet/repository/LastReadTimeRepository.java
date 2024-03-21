@@ -33,10 +33,8 @@ public class LastReadTimeRepository {
                 Criteria.where("roomId").is(messageListRequestDTO.getRoomId()).and("email").is(email));
         LastReadTime lastReadTime = mongoTemplate.findOne(query, LastReadTime.class);
         if (lastReadTime == null) {
-            System.out.println("@@@");
             return Date.from(Instant.now());
         }
-        System.out.println(lastReadTime.getAt());
         return lastReadTime.getAt();
     }
 
