@@ -2,11 +2,13 @@ package com.example.glomeet.service;
 
 import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.dto.PushMessageRequestDTO;
+import com.example.glomeet.dto.UpdateLastReadTimeDTO;
 import com.example.glomeet.mongo.model.ChatMessage;
 import com.example.glomeet.mongo.model.ChatMessage.Type;
 import com.example.glomeet.repository.ChatMessageRepositoryCustomImpl;
-import com.example.glomeet.util.DateUtil;
+import com.example.glomeet.repository.LastReadTimeRepository;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +28,7 @@ public class MessageService {
     private final UserService userService;
     private final FCMService fcmService;
     private final SimpMessagingTemplate template; //특정 Broker로 메세지를 전달
+    private final LastReadTimeRepository lastReadTimeRepository;
 
     private static final String COUNT_ACTIVE_USER_PREFIX = "activeUsers:";
 
@@ -33,6 +36,9 @@ public class MessageService {
         Type type = message.getType();
         String key = COUNT_ACTIVE_USER_PREFIX + message.getRoomId();
         setOperations = redisTemplate.opsForSet();
+        lastReadTimeRepository.updateLastReadTime(
+                new UpdateLastReadTimeDTO(message.getRoomId(), message.getSenderEmail(), Date.from(
+                        Instant.now())));
         if (type.equals(Type.ENTER)) {
             setOperations.add(key, message.getSenderEmail());
         } else if (type.equals(Type.EXIT)) {
@@ -44,7 +50,7 @@ public class MessageService {
 
     public void updateUnReadUserCount(MessageListRequestDTO messageListRequestDTO) {
         String id = messageListRequestDTO.getRoomId();
-        Date lastReadAt = DateUtil.parseDate(messageListRequestDTO.getLastReadAt());
+        Date lastReadAt = messageListRequestDTO.getLastReadAt();
         chatMessageRepositoryCustom.updateUnreadCountAfterDate(id, lastReadAt);
     }
 
@@ -52,7 +58,7 @@ public class MessageService {
         setOperations = redisTemplate.opsForSet();
         return setOperations.members(COUNT_ACTIVE_USER_PREFIX + roomId);
     }
-    
+
     public void sendMessage(String roomId, ChatMessage message) {
         // 현재 방에 접속해 있는 사용자들
         Set<String> currentChatUsers = findInRoomUsers(roomId);

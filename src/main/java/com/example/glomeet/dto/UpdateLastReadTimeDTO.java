@@ -1,18 +1,18 @@
 package com.example.glomeet.dto;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import java.util.Date;
-import javax.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 @AllArgsConstructor
-public class MessageListRequestDTO {
+public class UpdateLastReadTimeDTO {
     @NotNull
     private String roomId;
+    @NotNull
+    private String email;
     @Nullable
-    private Date lastReadAt;
+    private Date date;
 }

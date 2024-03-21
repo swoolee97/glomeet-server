@@ -1,7 +1,6 @@
 package com.example.glomeet.repository;
 
 import com.example.glomeet.mongo.model.ChatMessage;
-import java.time.Instant;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -17,8 +16,7 @@ public class ChatMessageRepositoryCustomImpl implements ChatMessageRepositoryCus
 
     @Override
     public void updateUnreadCountAfterDate(String roomId, Date date) {
-        Instant instant = date.toInstant();
-        Query query = new Query(Criteria.where("roomId").is(roomId).and("sendAt").gt(Date.from(instant)));
+        Query query = new Query(Criteria.where("roomId").is(roomId).and("sendAt").gt(date));
         Update update = new Update().inc("readCount", 1);
         mongoTemplate.updateMulti(query, update, ChatMessage.class);
     }

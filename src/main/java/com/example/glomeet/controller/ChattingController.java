@@ -2,8 +2,10 @@ package com.example.glomeet.controller;
 
 import com.example.glomeet.dto.MessageListRequestDTO;
 import com.example.glomeet.mongo.model.ChatMessage;
+import com.example.glomeet.repository.LastReadTimeRepository;
 import com.example.glomeet.service.ChattingService;
 import com.example.glomeet.service.MessageService;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
@@ -24,6 +26,7 @@ public class ChattingController {
 
     private final ChattingService chattingService;
     private final MessageService messageService;
+    private final LastReadTimeRepository lastReadTimeRepository;
 
     @PostMapping("/my")
     public ResponseEntity<?> getMyChatList() {
@@ -34,7 +37,10 @@ public class ChattingController {
     @PostMapping("/message-list")
     public ResponseEntity<?> getMessageListByChatRoomId(
             @RequestBody MessageListRequestDTO messageListRequestDTO) {
+        Date lastReadAt = lastReadTimeRepository.findLastReadTimeByRoomIdAndEmail(messageListRequestDTO);
+        messageListRequestDTO.setLastReadAt(lastReadAt);
         chattingService.commitMessagesToDatabase(messageListRequestDTO);
+        System.out.println(messageListRequestDTO.getLastReadAt());
         messageService.updateUnReadUserCount(messageListRequestDTO);
         List<ChatMessage> list = chattingService.findMatchingMessageByChatRoomId(messageListRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);
