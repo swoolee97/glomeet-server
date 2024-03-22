@@ -41,7 +41,7 @@ public class ChattingController {
         messageListRequestDTO.setLastReadAt(lastReadAt);
         chattingService.commitMessagesToDatabase(messageListRequestDTO);
         messageService.updateUnReadUserCount(messageListRequestDTO);
-        List<ChatMessage> list = chattingService.findMatchingMessageByChatRoomId(messageListRequestDTO);
+        List<ChatMessage> list = chattingService.findMessagesByChatRoomId(messageListRequestDTO);
         return new ResponseEntity<>(list, HttpStatus.OK);
     }
 

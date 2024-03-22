@@ -103,9 +103,20 @@ public class ChattingService {
         return infoList;
     }
 
-    public List<ChatMessage> findMatchingMessageByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
-        return chatMessageRepository.findMatchingMessagesByRoomId(
-                messageListRequestDTO.getRoomId());
+    public List<ChatMessage> findMessagesByChatRoomId(MessageListRequestDTO messageListRequestDTO) {
+        List<ChatMessage> messages = findUnreadMessages(messageListRequestDTO);
+        messages.addAll(findBeforeMessages(messageListRequestDTO));
+        return messages;
+    }
+
+    private List<ChatMessage> findBeforeMessages(MessageListRequestDTO messageListRequestDTO) {
+        return chatMessageRepository.findTop500ByRoomIdAndSendAtLessThanOrderBySendAtDesc(
+                messageListRequestDTO.getRoomId(), messageListRequestDTO.getLastReadAt());
+    }
+
+    private List<ChatMessage> findUnreadMessages(MessageListRequestDTO messageListRequestDTO) {
+        return chatMessageRepository.findByRoomIdAndSendAtGreaterThanEqualOrderBySendAtDesc(
+                messageListRequestDTO.getRoomId(), messageListRequestDTO.getLastReadAt());
     }
 
     public void commitMessagesToDatabase(MessageListRequestDTO messageListRequestDTO) {

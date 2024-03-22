@@ -9,10 +9,14 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
-    List<ChatMessage> findMatchingMessagesByRoomId(String roomId);
-
     ChatMessage findTopByRoomId(String roomId);
 
     @Query(value = "{'roomId': ?0, 'sendAt': {'$gt': ?1}}", count = true)
     int countMessagesAfterLastLeftAt(String roomId, Date lastLeftAt);
+
+    List<ChatMessage> findTop500ByRoomIdAndSendAtLessThanOrderBySendAtDesc(String roomId, Date lastReadAt);
+
+    List<ChatMessage> findByRoomIdAndSendAtGreaterThanEqualOrderBySendAtDesc(String roomId, Date lastReadAt);
+
+
 }
