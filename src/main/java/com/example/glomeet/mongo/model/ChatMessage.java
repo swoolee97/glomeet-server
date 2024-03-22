@@ -31,6 +31,8 @@ public class ChatMessage {
     @Field
     private String senderEmail;
     @Field
+    private String senderNickName;
+    @Field
     private Date sendAt;
     @Field
     private Type type;

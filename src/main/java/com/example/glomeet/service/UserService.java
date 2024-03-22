@@ -2,6 +2,7 @@ package com.example.glomeet.service;
 
 import com.example.glomeet.mapper.MatchingMapper;
 import com.example.glomeet.mapper.MeetingMapper;
+import com.example.glomeet.mapper.UserMapper;
 import java.util.List;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserService {
 
+    private final UserMapper userMapper;
     private final MatchingMapper matchingMapper;
     private final MeetingMapper meetingMapper;
     private final RedisTemplate<String, String> redisTemplate;
@@ -30,5 +32,9 @@ public class UserService {
         setOperations = redisTemplate.opsForSet();
         Set<String> onlineUsers = setOperations.members("activeUsers");
         return onlineUsers;
+    }
+
+    public String findNickNameByEmail(String email) {
+        return userMapper.findNickNameByEmail(email);
     }
 }

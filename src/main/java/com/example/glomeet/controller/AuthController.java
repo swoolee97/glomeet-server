@@ -1,8 +1,10 @@
 package com.example.glomeet.controller;
 
+import com.example.glomeet.dto.LoginResponseDTO;
 import com.example.glomeet.dto.UserDTO;
 import com.example.glomeet.service.AuthService;
 import com.example.glomeet.service.FCMService;
+import com.example.glomeet.service.UserService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.Map;
@@ -13,6 +15,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
     private final FCMService fcmService;
+    private final UserService userService;
 
     @PostMapping("/signUp")
     public ResponseEntity<?> signUp(@RequestBody @Valid SignUpDTO signUpDTO) {
@@ -41,15 +45,21 @@ public class AuthController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @Transactional
     @PostMapping("/signIn")
     public ResponseEntity<?> signIn(@RequestBody @Valid SignInDTO signInDTO) {
         Map<String, String> tokens = authService.signIn(signInDTO);
+        String nickName = userService.findNickNameByEmail(signInDTO.getEmail());
         fcmService.saveToken(signInDTO.getEmail(), signInDTO.getFcmToken());
         boolean result = authService.existAdditionalInfo(signInDTO.email);
+        LoginResponseDTO loginResponseDTO = LoginResponseDTO.builder()
+                .tokens(tokens)
+                .nickName(nickName)
+                .build();
         if (result) {
-            return ResponseEntity.ok().body(tokens);
+            return ResponseEntity.ok().body(loginResponseDTO);
         }
-        return new ResponseEntity<>(tokens, HttpStatus.CREATED);
+        return new ResponseEntity<>(loginResponseDTO, HttpStatus.CREATED);
     }
 
     @PostMapping("/signOut")
