@@ -8,7 +8,6 @@ import com.example.glomeet.mongo.model.ChatMessage.Type;
 import com.example.glomeet.repository.ChatMessageRepositoryCustomImpl;
 import com.example.glomeet.repository.LastReadTimeRepository;
 import java.io.IOException;
-import java.time.Instant;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -32,20 +31,23 @@ public class MessageService {
 
     private static final String COUNT_ACTIVE_USER_PREFIX = "activeUsers:";
 
-    public ChatMessage updateAndGetActiveUserCount(ChatMessage message) {
+    public void updateActiveUserCount(ChatMessage message) {
         Type type = message.getType();
         String key = COUNT_ACTIVE_USER_PREFIX + message.getRoomId();
         setOperations = redisTemplate.opsForSet();
-        lastReadTimeRepository.updateLastReadTime(
-                new UpdateLastReadTimeDTO(message.getRoomId(), message.getSenderEmail(), Date.from(
-                        Instant.now())));
         if (type.equals(Type.ENTER)) {
             setOperations.add(key, message.getSenderEmail());
         } else if (type.equals(Type.EXIT)) {
             setOperations.remove(key, message.getSenderEmail());
+            lastReadTimeRepository.updateLastReadTime(
+                    new UpdateLastReadTimeDTO(message.getRoomId(), message.getSenderEmail(), message.getSendAt()));
         }
-        message.setReadCount(setOperations.size(key).intValue());
-        return message;
+    }
+
+    public int getActiveUserCount(ChatMessage message) {
+        String key = COUNT_ACTIVE_USER_PREFIX + message.getRoomId();
+        setOperations = redisTemplate.opsForSet();
+        return setOperations.size(key).intValue();
     }
 
     public void updateUnReadUserCount(MessageListRequestDTO messageListRequestDTO) {

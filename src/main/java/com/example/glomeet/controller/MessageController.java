@@ -27,11 +27,12 @@ public class MessageController {
         if (type.equals(Type.JOIN) || type.equals(Type.LEAVE)) {
             chattingService.addMessageToRedis(message);
         } else if (type.equals(Type.SEND)) {
-            message = messageService.updateAndGetActiveUserCount(message);
+            int activeUserCount = messageService.getActiveUserCount(message);
+            message.setReadCount(activeUserCount);
             chattingService.saveMessageToRedis(message);
             messageService.sendMessage(roomId, message);
-        } else if (type.equals(Type.ENTER) || type.equals(Type.EXIT)) {
-            message = messageService.updateAndGetActiveUserCount(message);
+        } else if (type.equals(Type.ENTER) || type.equals(Type.EXIT)) { // EXIT일 때만 하는걸로 바꿔야함
+            messageService.updateActiveUserCount(message);
         }
     }
 
