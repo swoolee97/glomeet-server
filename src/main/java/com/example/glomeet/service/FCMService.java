@@ -55,6 +55,7 @@ public class FCMService {
                 .url("https://fcm.googleapis.com/v1/projects/" + PROJECT_ID + "/messages:send")
                 .build();
         Response response = client.newCall(request).execute();
+        response.close();
     }
 
     private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
@@ -81,6 +82,10 @@ public class FCMService {
     }
 
     public boolean saveToken(String email, String fcmToken) {
+        if (fcmMapper.countTokenByEmail(email)) {
+            fcmMapper.updateToken(email, fcmToken);
+            return true;
+        }
         int result = fcmMapper.insertToken(email, fcmToken);
         return result == 1;
     }

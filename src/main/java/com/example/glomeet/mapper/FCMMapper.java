@@ -15,4 +15,6 @@ public interface FCMMapper {
     int insertToken(String email, String token);
 
     boolean countTokenByEmail(String email);
+
+    void updateToken(String email, String token);
 }

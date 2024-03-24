@@ -22,4 +22,9 @@
         FROM FCMToken
         WHERE userEmail = #{email}
     </select>
+    <update id="updateToken">
+        UPDATE FCMToken
+        SET token = #{token}
+        WHERE userEmail = #{email}
+    </update>
 </mapper>

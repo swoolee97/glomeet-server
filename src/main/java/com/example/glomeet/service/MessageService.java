@@ -54,6 +54,9 @@ public class MessageService {
         // 현재 로그인한 모든 사용자들
         Set<String> onlineUsers = userService.findActiveUsers();
 
+        // 채팅방에 이벤트 보내기
+        template.convertAndSend("/sub/chat/" + roomId, message);
+
         // 새로운 메시지 이벤트를 받을 사용자들(웹소켓으로 전송)
         Set<String> newMessageEventUsers = new HashSet<>(allChatUsers);
         newMessageEventUsers.removeAll(currentChatUsers);
@@ -76,9 +79,6 @@ public class MessageService {
                 throw new RuntimeException(e);
             }
         });
-
-        // 채팅방에 이벤트 보내기
-        template.convertAndSend("/sub/chat/" + roomId, message);
     }
 
 
