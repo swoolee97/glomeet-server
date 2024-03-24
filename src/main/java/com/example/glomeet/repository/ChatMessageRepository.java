@@ -14,7 +14,7 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     @Query(value = "{'roomId': ?0, 'sendAt': {'$gt': ?1}}", count = true)
     int countMessagesAfterLastLeftAt(String roomId, Date lastLeftAt);
 
-    List<ChatMessage> findTop500ByRoomIdAndSendAtLessThanOrderBySendAtDesc(String roomId, Date lastReadAt);
+    List<ChatMessage> findTop50ByRoomIdAndSendAtLessThanOrderBySendAtDesc(String roomId, Date lastReadAt);
 
     List<ChatMessage> findByRoomIdAndSendAtGreaterThanEqualOrderBySendAtDesc(String roomId, Date lastReadAt);
 

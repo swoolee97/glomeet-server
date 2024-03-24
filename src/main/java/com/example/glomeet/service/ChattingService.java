@@ -110,7 +110,7 @@ public class ChattingService {
     }
 
     private List<ChatMessage> findBeforeMessages(MessageListRequestDTO messageListRequestDTO) {
-        return chatMessageRepository.findTop500ByRoomIdAndSendAtLessThanOrderBySendAtDesc(
+        return chatMessageRepository.findTop50ByRoomIdAndSendAtLessThanOrderBySendAtDesc(
                 messageListRequestDTO.getRoomId(), messageListRequestDTO.getLastReadAt());
     }
 

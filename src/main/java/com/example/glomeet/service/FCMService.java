@@ -46,6 +46,7 @@ public class FCMService {
         }
         String message = makeMessage(targetToken.get().getToken(), pushMessageRequestDTO.getTitle(),
                 pushMessageRequestDTO.getBody());
+        System.out.println(message);
         RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
         Request request = new Request.Builder()
                 .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + getAccessToken())
