@@ -24,8 +24,9 @@ public class MessageController {
     public void sendMessage(@Payload ChatMessage message, @DestinationVariable String roomId) {
         Type type = message.getType();
         message.setSendAt(Date.from(Instant.now()));
-        if (type.equals(Type.JOIN) || type.equals(Type.LEAVE)) {
+        if (type.equals(Type.JOIN) || type.equals(Type.LEAVE) || type.equals(Type.CREATE)) {
             chattingService.addMessageToRedis(message);
+            messageService.sendInfoMessage(roomId, message);
         } else if (type.equals(Type.SEND)) {
             int activeUserCount = messageService.getActiveUserCount(message);
             message.setReadCount(activeUserCount);

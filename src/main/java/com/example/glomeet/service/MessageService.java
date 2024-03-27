@@ -46,6 +46,10 @@ public class MessageService {
         return setOperations.members(COUNT_ACTIVE_USER_PREFIX + roomId);
     }
 
+    public void sendInfoMessage(String roomId, ChatMessage message) {
+        template.convertAndSend("/sub/chat/" + roomId, message);
+    }
+
     public void sendMessage(String roomId, ChatMessage message) {
         // 현재 방에 접속해 있는 사용자들
         Set<String> currentChatUsers = findInRoomUsers(roomId);
